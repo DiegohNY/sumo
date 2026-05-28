@@ -1,0 +1,21 @@
+name: Sumo
+version: ${version}
+main: dev.diegoh.sumo.SumoPlugin
+api-version: '1.20'
+author: diegoh
+description: Multi-arena Sumo minigame with persistent stats and i18n.
+website: https://github.com/diegoh/sumo
+commands:
+  sumo:
+    description: Main command for the Sumo plugin
+    usage: /sumo help
+    aliases: [s, sm]
+permissions:
+  sumo.play:
+    description: Play in Sumo arenas
+    default: true
+  sumo.admin:
+    description: Administer Sumo arenas and config
+    default: op
+    children:
+      sumo.play: true

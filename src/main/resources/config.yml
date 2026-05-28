@@ -1,0 +1,46 @@
+# Sumo plugin configuration.
+# See https://github.com/diegoh/sumo for documentation.
+
+locale:
+  # Default locale code (used when player locale not available or not supported).
+  default: en_US
+  # If true, use the player's client locale; otherwise always use the default.
+  follow-player-locale: true
+
+storage:
+  # Database driver: sqlite | mysql
+  driver: sqlite
+  # SQLite: path relative to plugin data folder.
+  sqlite-file: stats.db
+  # MySQL: connection settings (ignored when driver=sqlite).
+  mysql:
+    host: localhost
+    port: 3306
+    database: sumo
+    username: sumo
+    password: ""
+    use-ssl: false
+  pool:
+    maximum-pool-size: 8
+    minimum-idle: 2
+    connection-timeout-ms: 5000
+
+defaults:
+  # Defaults used when creating a new arena. Each arena can override these.
+  min-players: 2
+  max-players: 8
+  join-period-seconds: 30
+  match-countdown-seconds: 5
+  end-delay-seconds: 8
+  knockback:
+    strength: 1.0
+    vertical-boost: 0.4
+    friction: 0.5
+
+scoreboard:
+  enabled: true
+  title: "<gold><b>Sumo</b></gold>"
+
+queue:
+  enabled: true
+  auto-start-when-full: true

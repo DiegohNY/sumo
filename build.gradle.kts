@@ -69,6 +69,13 @@ tasks.build { dependsOn(tasks.shadowJar) }
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs(
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+    )
     finalizedBy(tasks.jacocoTestReport)
 }
 
