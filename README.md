@@ -3,45 +3,60 @@
 > A modern, multi-arena Sumo minigame plugin for Minecraft 1.20.x – 1.21.x.
 
 [![CI](https://github.com/DiegohNY/sumo/actions/workflows/ci.yml/badge.svg)](https://github.com/DiegohNY/sumo/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/DiegohNY/sumo?include_prereleases&sort=semver)](https://github.com/DiegohNY/sumo/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Server](https://img.shields.io/badge/Spigot%20%7C%20Paper%20%7C%20Purpur-1.20.x--1.21.x-brightgreen)]()
+[![Java](https://img.shields.io/badge/Java-17%2B-orange)]()
 [![SpigotMC](https://img.shields.io/badge/SpigotMC-Sumo-orange)](https://www.spigotmc.org/resources/sumo.45639/)
+
+Fast-paced 1v1 pushing minigame. Two players enter the ring; the one knocked into water or out of the arena loses. Round-robin tournament until one champion remains. Built for production servers: multi-arena, concurrent sessions, SQL-backed stats, async I/O, Adventure-powered UI, and full i18n.
 
 ## Features
 
-- **Multi-arena**: create and run independent arenas concurrently.
-- **Per-arena config**: spawns, lobby, bounds, knockback tuning.
-- **Matchmaking queue**: per-arena FIFO queue (programmatic; CLI exposure planned).
-- **Persistent stats**: wins, losses, current streak, best streak — stored in SQLite (zero-config) or MySQL/MariaDB.
-- **i18n**: English and Italian shipped; drop a `messages_<locale>.yml` to add more.
-- **Adventure UI**: MiniMessage-formatted chat and scoreboard sidebar.
-- **Inventory snapshot** captured on join and restored on leave/elimination.
+- **Multi-arena** — run any number of arenas in parallel, each with its own config.
+- **Per-arena config** — spawns, lobby, cylinder bounds, knockback tuning (strength, vertical boost, friction).
+- **Matchmaking queue** — per-arena FIFO (programmatic; CLI exposure on the roadmap).
+- **Persistent stats** — wins, losses, current streak, best streak — SQLite (zero-config) or MySQL/MariaDB via HikariCP, async I/O.
+- **i18n** — English and Italian shipped; drop a `messages_<locale>.yml` for any other locale, with player-locale follow.
+- **Adventure UI** — MiniMessage chat formatting and scoreboard sidebar.
+- **Inventory snapshot** — captured on join, restored on leave/elimination/quit, survives crashes.
+- **Water + out-of-bounds elimination** — classic Sumo rules.
+- **Lightweight** — ~1.1 MB shaded jar; JDBC drivers downloaded on demand via `plugin.yml` `libraries:`.
+
+## Requirements
+
+| Component | Version |
+|-----------|---------|
+| Server software | Spigot / Paper / Purpur (or any fork) |
+| Minecraft | 1.20.x – 1.21.x |
+| Java | 17 or newer |
+| Storage | SQLite (default, bundled at runtime) or MySQL / MariaDB |
 
 ## Install
 
 1. Download the latest `sumo-x.y.z.jar` from [GitHub Releases](https://github.com/DiegohNY/sumo/releases) or [SpigotMC](https://www.spigotmc.org/resources/sumo.45639/).
 2. Drop it into your server's `plugins/` directory.
 3. Start the server — `plugins/Sumo/config.yml` is generated.
-4. Optionally edit `plugins/Sumo/config.yml` and `plugins/Sumo/lang/messages_<locale>.yml`.
+4. (Optional) Edit `plugins/Sumo/config.yml` and `plugins/Sumo/lang/messages_<locale>.yml`.
 5. In game: `/sumo create main`, set spawns / lobby / bounds, then `/sumo join main`.
 
 ## Commands
 
 | Command | Description | Permission |
-|--------|-------------|------------|
+|---------|-------------|------------|
 | `/sumo join <arena>` | Join an arena. | `sumo.play` |
 | `/sumo leave` | Leave your current game. | `sumo.play` |
-| `/sumo list` | List arenas and state. | `sumo.play` |
+| `/sumo list` | List arenas and their state. | `sumo.play` |
 | `/sumo stats [player]` | View stats. | `sumo.play` |
 | `/sumo reload` | Reload config, language files, and arenas. | `sumo.admin` |
 | `/sumo create <id>` | Create an arena from your current location. | `sumo.admin` |
 | `/sumo delete <id>` | Delete an arena. | `sumo.admin` |
-| `/sumo setspawn <id> <a\|b>` | Set spawn point. | `sumo.admin` |
+| `/sumo setspawn <id> <a\|b>` | Set spawn point A or B. | `sumo.admin` |
 | `/sumo setlobby <id>` | Set lobby spawn. | `sumo.admin` |
 | `/sumo setbounds <id> <radius>` | Set arena cylinder radius (center = your location). | `sumo.admin` |
-| `/sumo setkb <id> <strength> <vertical> <friction>` | Tune knockback. | `sumo.admin` |
-| `/sumo forcestart <id>` | Force start. | `sumo.admin` |
-| `/sumo forcestop <id>` | Force stop. | `sumo.admin` |
+| `/sumo setkb <id> <strength> <vertical> <friction>` | Tune per-arena knockback. | `sumo.admin` |
+| `/sumo forcestart <id>` | Force start a tournament. | `sumo.admin` |
+| `/sumo forcestop <id>` | Force stop a tournament. | `sumo.admin` |
 
 ## Permissions
 
@@ -50,17 +65,30 @@
 | `sumo.play` | `true` | Join arenas, view stats. |
 | `sumo.admin` | `op` | Full admin access. Implies `sumo.play`. |
 
-## Config
+## Configuration
 
-See `src/main/resources/config.yml` for the annotated default.
+See [`src/main/resources/config.yml`](src/main/resources/config.yml) for the annotated default.
 
 - `locale.default` / `locale.follow-player-locale` — i18n behavior.
 - `storage.driver` = `sqlite` (zero-config) or `mysql` (HikariCP pool).
 - `defaults.*` — applied to new arenas; each arena can override its own settings.
 
+To use MySQL/MariaDB:
+
+```yaml
+storage:
+  driver: mysql
+  mysql:
+    host: localhost
+    port: 3306
+    database: sumo
+    username: sumo
+    password: ""
+```
+
 ## Languages
 
-Drop `plugins/Sumo/lang/messages_<locale>.yml` to add or override a locale. Existing keys override the bundled defaults; missing keys fall back to `en_US`.
+Drop `plugins/Sumo/lang/messages_<locale>.yml` to add or override a locale. Existing keys override the bundled defaults; missing keys fall back to `en_US`. Bundled: `en_US`, `it_IT`. Contributions for additional locales welcome — see [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-language).
 
 ## Building
 
@@ -78,12 +106,32 @@ The shaded jar lands in `build/libs/sumo-<version>.jar`.
 ./gradlew runServer
 ```
 
-Spawns a Paper 1.20.6 dev server in `./run/` with the plugin pre-loaded. Re-run after editing.
+Spawns a Paper 1.20.6 dev server in `./run/` with the plugin pre-loaded. Re-run after editing. For remote debug attach on port `5005`:
+
+```bash
+./gradlew runServer --debug-jvm
+```
+
+## Roadmap
+
+See the `[Unreleased]` section of [CHANGELOG.md](CHANGELOG.md) for planned work (queue CLI, bStats, PlaceholderAPI, ELO, GUI selector, Brigadier-native commands, reconnect).
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style (Google Java Format), commit convention (Conventional Commits), and the testing policy. By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+Found a vulnerability? Please follow [SECURITY.md](SECURITY.md) and do **not** open a public issue.
+
+## Support & contact
+
+- **Bug reports / feature requests:** [GitHub Issues](https://github.com/DiegohNY/sumo/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/DiegohNY/sumo/discussions) (enable in repo settings if missing)
+- **SpigotMC page:** <https://www.spigotmc.org/resources/sumo.45639/>
+- **Email:** diegosici@icloud.com
+- **Discord:** `@DiegohNY`
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE). Free to use, modify, redistribute, and ship inside commercial products — only requirement is keeping the copyright notice and license text in any copy or substantial portion of the source.

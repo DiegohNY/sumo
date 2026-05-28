@@ -63,6 +63,7 @@ tasks.shadowJar {
     archiveClassifier.set("")
     val shadeBase = "${project.group}.shadow"
     relocate("net.kyori", "$shadeBase.kyori")
+    minimize()
 }
 
 tasks.build { dependsOn(tasks.shadowJar) }
