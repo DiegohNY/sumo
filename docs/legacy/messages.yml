@@ -1,0 +1,47 @@
+# Messages for Sumo plugin
+
+messages:
+  # Help Messages
+  help:
+    join: "&e/sumo join &7- Join the sumo event"
+    start: "&e/sumo start &7- Start the event"
+    forcestart: "&e/sumo forcestart &7- Force start the event"
+    forcestop: "&e/sumo forcestop &7- Force stop the event"
+    setspawn1: "&e/sumo setspawn1 &7- Set spawn point 1"
+    setspawn2: "&e/sumo setspawn2 &7- Set spawn point 2"
+    setlobby: "&e/sumo setlobby &7- Set lobby spawn point"
+    setarena: "&e/sumo setarena &7- Set arena configuration"
+
+  # Game Messages
+  playersOnly: "&cThis command can only be used by players!"
+  joinEvent: "&aYou have joined the Sumo event!"
+  playerJoined: "&e%player% has joined the Sumo event! (%count%/%max% players)"
+  alreadyJoined: "&cYou are already in the event!"
+  notJoinable: "&cThe event is not joinable at the moment!"
+  eventStarting: "&eSumo event is starting! Use /sumo join to participate! (%players% players)"
+  eventStopped: "&cThe Sumo event has been stopped!"
+  playerEliminated: "&c%player% has been eliminated from the tournament!"
+  playerLeft: "&c%player% has left the tournament!"
+  eventFull: "&cThe event is full! Maximum players reached."
+
+  # Admin Messages
+  spawn1Set: "&aSpawn point 1 has been set!"
+  spawn2Set: "&aSpawn point 2 has been set!"
+  lobbySet: "&aLobby spawn point has been set!"
+  arenaRadiusSet: "&aArena radius has been set to %value%!"
+  noPermission: "&cYou don't have permission to use this command!"
+
+  # Match Messages
+  matchStarting: "&e&lNext match: %player1% vs %player2%"
+  matchWinner: "&e&l%player% has won the match!"
+  eventWinner: "&e&l%player% has won the Sumo event!"
+  notEnoughPlayers: "&cNot enough players to start the event!"
+  forceStartNotEnough: "&cNot enough players to force start!"
+  matchCountdown: "&e&lMatch starting in %seconds% seconds!"
+  matchStart: "&e&lFIGHT!"
+  matchDraw: "&e&lMatch ended in a draw!"
+  matchTimeout: "&c&lMatch timed out!"
+  tournamentEnd: "&e&lTournament has ended! Thank you for participating!"
+  tournamentWinner: "&e&l%player% has won the tournament! Congratulations!"
+  endingIn: "&e&lTournament ending in %seconds% seconds..."
+  returnToLobby: "&eTeleporting back to lobby in %seconds% seconds..."

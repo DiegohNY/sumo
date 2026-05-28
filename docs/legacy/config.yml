@@ -1,0 +1,21 @@
+# Sumo Plugin Configuration
+
+# Game Settings
+minPlayers: 2 # minimum players required to start normally
+joinPeriod: 30 # seconds to wait for players to join
+countdown: 5 # seconds before each match starts
+maxPlayers: 16 # maximum players allowed in one event
+minPlayersToForceStart: 2 # minimum players required for force start
+
+# Arena Settings
+arena:
+  radius: 100 # radius of the arena in blocks
+
+# Match Settings
+matchTimeout: 300 # seconds before match is considered a draw
+knockbackMultiplier: 1.0 # multiplier for knockback force
+
+# Storage Settings
+storage:
+  saveInventoriesToFile: true # whether to save player inventories to files
+  cleanupOnEventEnd: true # whether to clean up inventory files when event ends

@@ -1,0 +1,31 @@
+name: Sumo
+version: 4.0.2
+main: it.diegoh.sumo.Sumo
+api-version: 1.21
+
+commands:
+  sumo:
+    description: Main command for Sumo plugin
+    usage: /sumo <join|start|forcestart|forcestop|setspawn1|setspawn2|setlobby|setarena>
+    aliases: [s]
+
+permissions:
+  sumo.admin:
+    description: Allows access to all Sumo commands
+    default: op
+    children:
+      sumo.start: true
+      sumo.setspawn: true
+      sumo.setarena: true
+  sumo.start:
+    description: Allows starting Sumo events
+    default: true
+  sumo.setspawn:
+    description: Allows setting spawn points
+    default: op
+  sumo.setarena:
+    description: Allows configuring arena settings
+    default: op
+  sumo.join:
+    description: Allows joining Sumo events
+    default: true
