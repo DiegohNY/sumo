@@ -20,4 +20,6 @@ public record PluginConfig(
     int defaultMaxPlayers,
     double defaultKnockbackStrength,
     double defaultKnockbackVertical,
-    double defaultKnockbackFriction) {}
+    double defaultKnockbackFriction,
+    boolean scoreboardEnabled,
+    boolean guiEnabled) {}

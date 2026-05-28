@@ -6,6 +6,7 @@ import dev.diegoh.sumo.command.SumoCommand;
 import dev.diegoh.sumo.command.sub.JoinSub;
 import dev.diegoh.sumo.command.sub.LeaveSub;
 import dev.diegoh.sumo.command.sub.ListSub;
+import dev.diegoh.sumo.command.sub.MenuSub;
 import dev.diegoh.sumo.command.sub.ReloadSub;
 import dev.diegoh.sumo.command.sub.StatsSub;
 import dev.diegoh.sumo.command.sub.admin.ArenaCreateSub;
@@ -19,6 +20,8 @@ import dev.diegoh.sumo.command.sub.admin.ForceStopSub;
 import dev.diegoh.sumo.config.ConfigLoader;
 import dev.diegoh.sumo.config.PluginConfig;
 import dev.diegoh.sumo.game.GameOrchestrator;
+import dev.diegoh.sumo.gui.ArenaSelectorGui;
+import dev.diegoh.sumo.gui.MenuListener;
 import dev.diegoh.sumo.i18n.LocaleResolver;
 import dev.diegoh.sumo.i18n.MessageKey;
 import dev.diegoh.sumo.i18n.Messages;
@@ -32,6 +35,7 @@ import dev.diegoh.sumo.queue.QueueService;
 import dev.diegoh.sumo.stats.SqlStatsRepository;
 import dev.diegoh.sumo.stats.StatsRepository;
 import dev.diegoh.sumo.stats.StatsService;
+import dev.diegoh.sumo.ui.SessionUiPresenter;
 import dev.diegoh.sumo.util.AdventureUtil;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -63,8 +67,20 @@ public class SumoPlugin extends JavaPlugin {
     InventoryStore inventoryStore = new InventoryStore();
     SessionRegistry registry = new SessionRegistry();
     orchestrator = new GameOrchestrator(this, inventoryStore, registry);
+
+    Locale defaultLocale = parseLocale(pluginConfig.defaultLocale());
+    orchestrator.setOnSessionCreated(
+        session -> {
+          SessionUiPresenter presenter =
+              new SessionUiPresenter(
+                  session, messages, defaultLocale, adventure, pluginConfig.scoreboardEnabled());
+          presenter.attach();
+        });
+
     // QueueService initialized but not yet wired into command flow (planned for future iteration).
     new QueueService();
+
+    ArenaSelectorGui gui = new ArenaSelectorGui(arenaService, orchestrator);
 
     SumoCommand root =
         new SumoCommand(messages, localeResolver, adventure)
@@ -72,6 +88,8 @@ public class SumoPlugin extends JavaPlugin {
             .register(new LeaveSub(orchestrator, messages, localeResolver, adventure))
             .register(new ListSub(arenaService, orchestrator, messages, localeResolver, adventure))
             .register(new StatsSub(statsService, messages, localeResolver, adventure))
+            .register(
+                new MenuSub(gui, pluginConfig.guiEnabled(), messages, localeResolver, adventure))
             .register(new ReloadSub(messages, arenaRepository, this, localeResolver, adventure))
             .register(
                 new ArenaCreateSub(arenaService, pluginConfig, messages, localeResolver, adventure))
@@ -91,6 +109,11 @@ public class SumoPlugin extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new ProtectionListener(orchestrator), this);
     getServer().getPluginManager().registerEvents(new BoundsListener(orchestrator), this);
     getServer().getPluginManager().registerEvents(new CombatListener(orchestrator), this);
+    if (pluginConfig.guiEnabled()) {
+      getServer()
+          .getPluginManager()
+          .registerEvents(new MenuListener(gui, arenaService, orchestrator), this);
+    }
 
     adventure.audiences().console().sendMessage(messages.get(Locale.US, MessageKey.PLUGIN_ENABLED));
   }
@@ -100,6 +123,11 @@ public class SumoPlugin extends JavaPlugin {
     if (orchestrator != null) orchestrator.shutdownAll();
     if (statsRepository != null) statsRepository.close();
     if (adventure != null) adventure.close();
+  }
+
+  private static Locale parseLocale(String code) {
+    String[] parts = code.split("_");
+    return parts.length >= 2 ? new Locale(parts[0], parts[1]) : new Locale(parts[0]);
   }
 
   private StatsRepository createStatsRepository(PluginConfig config) {

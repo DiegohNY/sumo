@@ -6,6 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- Live session UI: action bar on join, titles on match start / FIGHT! / tournament end, chat broadcasts on elimination, auto-applied scoreboard sidebar that refreshes on every state change.
+- Typed `SessionEvent` stream with `subscribe(Consumer)` API on `GameSession` for any future presenter.
+- `/sumo menu` — chest-style arena selector with one color-coded item per arena (idle/waiting/countdown/active/ending). Toggle via `gui.enabled`.
+- Config keys: `scoreboard.enabled`, `gui.enabled`.
+
 ### Planned
 
 - CLI surface for the matchmaking queue (currently programmatic only).
@@ -13,7 +20,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - PlaceholderAPI integration.
 - ELO/MMR matchmaking and `/sumo top` leaderboard.
 - Tournament bracket display.
-- GUI arena selector (chest inventory).
 - Mid-match reconnect with reserved slot.
 - Brigadier-native commands for Paper.
 

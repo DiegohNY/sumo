@@ -8,6 +8,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -17,6 +19,7 @@ public final class GameSession {
   private final Arena arena;
   private final InventoryStore inventoryStore;
   private final Deque<UUID> participants = new ArrayDeque<>();
+  private final List<Consumer<SessionEvent>> subscribers = new CopyOnWriteArrayList<>();
   private GameState state = GameState.IDLE;
   private Match currentMatch;
   private UUID winner;
@@ -25,6 +28,31 @@ public final class GameSession {
     this.plugin = plugin;
     this.arena = arena;
     this.inventoryStore = inventoryStore;
+  }
+
+  public void subscribe(Consumer<SessionEvent> subscriber) {
+    subscribers.add(subscriber);
+  }
+
+  public void unsubscribe(Consumer<SessionEvent> subscriber) {
+    subscribers.remove(subscriber);
+  }
+
+  private void fire(SessionEvent event) {
+    for (Consumer<SessionEvent> s : subscribers) {
+      try {
+        s.accept(event);
+      } catch (Exception ex) {
+        plugin.getLogger().warning("Session subscriber threw: " + ex.getMessage());
+      }
+    }
+  }
+
+  private void setState(GameState next) {
+    if (state == next) return;
+    GameState previous = state;
+    state = next;
+    fire(new SessionEvent.StateChanged(previous, next));
   }
 
   public boolean addPlayer(Player player) {
@@ -36,7 +64,8 @@ public final class GameSession {
     player.getInventory().setArmorContents(new org.bukkit.inventory.ItemStack[4]);
     player.teleport(arena.lobby());
     participants.add(player.getUniqueId());
-    state = GameState.WAITING;
+    setState(GameState.WAITING);
+    fire(new SessionEvent.PlayerJoined(player.getUniqueId()));
     return true;
   }
 
@@ -44,6 +73,7 @@ public final class GameSession {
     boolean removed = participants.remove(uuid);
     Player p = Bukkit.getPlayer(uuid);
     if (p != null) inventoryStore.restore(p);
+    if (removed) fire(new SessionEvent.PlayerLeft(uuid));
     if (currentMatch != null
         && (currentMatch.playerA().equals(uuid) || currentMatch.playerB().equals(uuid))) {
       UUID survivor =
@@ -56,7 +86,7 @@ public final class GameSession {
   public boolean startTournament() {
     if (state != GameState.WAITING) return false;
     if (participants.size() < arena.minPlayers()) return false;
-    state = GameState.COUNTDOWN;
+    setState(GameState.COUNTDOWN);
     startNextMatch();
     return true;
   }
@@ -71,8 +101,9 @@ public final class GameSession {
     participants.addFirst(b);
     participants.addFirst(a);
     currentMatch = new Match(a, b);
-    state = GameState.COUNTDOWN;
+    setState(GameState.COUNTDOWN);
     teleportToSpawns(a, b);
+    fire(new SessionEvent.MatchStarted(a, b));
   }
 
   private void teleportToSpawns(UUID a, UUID b) {
@@ -83,17 +114,18 @@ public final class GameSession {
   }
 
   public void skipCountdownForTesting() {
-    state = GameState.ACTIVE;
+    setState(GameState.ACTIVE);
   }
 
   public void onCountdownFinished() {
-    state = GameState.ACTIVE;
+    setState(GameState.ACTIVE);
   }
 
   public void recordElimination(UUID loser) {
     if (state != GameState.ACTIVE || currentMatch == null) return;
     UUID winnerId =
         currentMatch.playerA().equals(loser) ? currentMatch.playerB() : currentMatch.playerA();
+    fire(new SessionEvent.PlayerEliminated(loser, winnerId));
     advanceAfterMatch(winnerId, loser);
   }
 
@@ -113,7 +145,8 @@ public final class GameSession {
 
   private void endTournament() {
     if (!participants.isEmpty()) winner = participants.peek();
-    state = GameState.ENDING;
+    setState(GameState.ENDING);
+    if (winner != null) fire(new SessionEvent.TournamentEnded(winner));
   }
 
   public List<UUID> participants() {

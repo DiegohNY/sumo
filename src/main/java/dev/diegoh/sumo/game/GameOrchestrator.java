@@ -6,6 +6,7 @@ import dev.diegoh.sumo.player.SessionRegistry;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -14,6 +15,7 @@ public final class GameOrchestrator {
   private final InventoryStore inventoryStore;
   private final SessionRegistry registry;
   private final ConcurrentHashMap<String, GameSession> byArena = new ConcurrentHashMap<>();
+  private Consumer<GameSession> onSessionCreated = s -> {};
 
   public GameOrchestrator(Plugin plugin, InventoryStore inventoryStore, SessionRegistry registry) {
     this.plugin = plugin;
@@ -21,10 +23,20 @@ public final class GameOrchestrator {
     this.registry = registry;
   }
 
+  public void setOnSessionCreated(Consumer<GameSession> hook) {
+    this.onSessionCreated = hook == null ? s -> {} : hook;
+  }
+
   public boolean join(Arena arena, Player player) {
     if (registry.find(player.getUniqueId()).isPresent()) return false;
     GameSession session =
-        byArena.computeIfAbsent(arena.id(), id -> new GameSession(plugin, arena, inventoryStore));
+        byArena.computeIfAbsent(
+            arena.id(),
+            id -> {
+              GameSession s = new GameSession(plugin, arena, inventoryStore);
+              onSessionCreated.accept(s);
+              return s;
+            });
     if (!session.addPlayer(player)) return false;
     registry.bind(player.getUniqueId(), session);
     return true;

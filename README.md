@@ -18,7 +18,8 @@ Fast-paced 1v1 pushing minigame. Two players enter the ring; the one knocked int
 - **Matchmaking queue** — per-arena FIFO (programmatic; CLI exposure on the roadmap).
 - **Persistent stats** — wins, losses, current streak, best streak — SQLite (zero-config) or MySQL/MariaDB via HikariCP, async I/O.
 - **i18n** — English and Italian shipped; drop a `messages_<locale>.yml` for any other locale, with player-locale follow.
-- **Adventure UI** — MiniMessage chat formatting and scoreboard sidebar.
+- **Adventure UI** — MiniMessage chat, action bars, titles on key events, and live scoreboard sidebar (toggle via `scoreboard.enabled`).
+- **Chest GUI arena selector** — `/sumo menu` (toggle via `gui.enabled`).
 - **Inventory snapshot** — captured on join, restored on leave/elimination/quit, survives crashes.
 - **Water + out-of-bounds elimination** — classic Sumo rules.
 - **Lightweight** — ~1.1 MB shaded jar; JDBC drivers downloaded on demand via `plugin.yml` `libraries:`.
@@ -48,6 +49,7 @@ Fast-paced 1v1 pushing minigame. Two players enter the ring; the one knocked int
 | `/sumo leave` | Leave your current game. | `sumo.play` |
 | `/sumo list` | List arenas and their state. | `sumo.play` |
 | `/sumo stats [player]` | View stats. | `sumo.play` |
+| `/sumo menu` | Open the chest GUI arena selector (toggle via `gui.enabled`). | `sumo.play` |
 | `/sumo reload` | Reload config, language files, and arenas. | `sumo.admin` |
 | `/sumo create <id>` | Create an arena from your current location. | `sumo.admin` |
 | `/sumo delete <id>` | Delete an arena. | `sumo.admin` |

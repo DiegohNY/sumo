@@ -41,6 +41,10 @@ scoreboard:
   enabled: true
   title: "<gold><b>Sumo</b></gold>"
 
+gui:
+  # /sumo menu — chest GUI to pick an arena.
+  enabled: true
+
 queue:
   enabled: true
   auto-start-when-full: true
