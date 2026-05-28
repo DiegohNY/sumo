@@ -1,0 +1,38 @@
+# Build
+build/
+target/
+out/
+*.jar
+*.class
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local dev server
+run/
+server/
+local-paper/
+eula.txt
+
+# Secrets
+*.env
+.env.*
+
+# Test artifacts
+**/test-output/
+**/jacoco/
