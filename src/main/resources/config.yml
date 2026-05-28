@@ -1,5 +1,5 @@
 # Sumo plugin configuration.
-# See https://github.com/diegoh/sumo for documentation.
+# See https://github.com/DiegohNY/sumo for documentation.
 
 locale:
   # Default locale code (used when player locale not available or not supported).

@@ -2,9 +2,10 @@
 
 > A modern, multi-arena Sumo minigame plugin for Minecraft 1.20.x – 1.21.x.
 
-[![CI](https://github.com/diegoh/sumo/actions/workflows/ci.yml/badge.svg)](https://github.com/diegoh/sumo/actions/workflows/ci.yml)
+[![CI](https://github.com/DiegohNY/sumo/actions/workflows/ci.yml/badge.svg)](https://github.com/DiegohNY/sumo/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Server](https://img.shields.io/badge/Spigot%20%7C%20Paper%20%7C%20Purpur-1.20.x--1.21.x-brightgreen)]()
+[![SpigotMC](https://img.shields.io/badge/SpigotMC-Sumo-orange)](https://www.spigotmc.org/resources/sumo.45639/)
 
 ## Features
 
@@ -18,7 +19,7 @@
 
 ## Install
 
-1. Download the latest `sumo-x.y.z.jar` from [Releases](https://github.com/diegoh/sumo/releases).
+1. Download the latest `sumo-x.y.z.jar` from [GitHub Releases](https://github.com/DiegohNY/sumo/releases) or [SpigotMC](https://www.spigotmc.org/resources/sumo.45639/).
 2. Drop it into your server's `plugins/` directory.
 3. Start the server — `plugins/Sumo/config.yml` is generated.
 4. Optionally edit `plugins/Sumo/config.yml` and `plugins/Sumo/lang/messages_<locale>.yml`.

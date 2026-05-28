@@ -4,7 +4,7 @@ main: dev.diegoh.sumo.SumoPlugin
 api-version: '1.20'
 author: diegoh
 description: Multi-arena Sumo minigame with persistent stats and i18n.
-website: https://github.com/diegoh/sumo
+website: https://www.spigotmc.org/resources/sumo.45639/
 commands:
   sumo:
     description: Main command for the Sumo plugin
