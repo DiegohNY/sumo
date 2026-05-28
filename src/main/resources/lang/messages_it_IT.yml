@@ -1,0 +1,52 @@
+plugin:
+  enabled: "<green>Sumo attivato.</green>"
+  disabled: "<red>Sumo disattivato.</red>"
+  reloaded: "<green>Sumo ricaricato.</green>"
+error:
+  no-permission: "<red>Non hai i permessi per farlo.</red>"
+  players-only: "<red>Questo comando può essere usato solo dai giocatori.</red>"
+  invalid-usage: "<red>Uso: <usage></red>"
+arena:
+  not-found: "<red>Arena <yellow><id></yellow> non trovata.</red>"
+  created: "<green>Arena <yellow><id></yellow> creata.</green>"
+  deleted: "<green>Arena <yellow><id></yellow> eliminata.</green>"
+  list-header: "<gold><b>Arene:</b></gold>"
+  list-entry: "<gray>•</gray> <yellow><id></yellow> <dark_gray>(<state>)</dark_gray>"
+  spawn-set: "<green>Spawn <slot> impostato per l'arena <yellow><id></yellow>.</green>"
+  lobby-set: "<green>Lobby impostata per l'arena <yellow><id></yellow>.</green>"
+  bounds-set: "<green>Raggio impostato a <radius> per l'arena <yellow><id></yellow>.</green>"
+  kb-set: "<green>Knockback impostato (s=<strength>, v=<vertical>, f=<friction>) per l'arena <yellow><id></yellow>.</green>"
+join:
+  success: "<green>Entrato nell'arena <yellow><id></yellow>.</green>"
+  already-in-game: "<red>Sei già in una partita.</red>"
+  full: "<red>Arena piena.</red>"
+leave:
+  success: "<green>Hai abbandonato la partita.</green>"
+  not-in-game: "<red>Non sei in nessuna partita.</red>"
+queue:
+  joined: "<aqua>In coda per l'arena <yellow><id></yellow> (posizione <position>).</aqua>"
+  left: "<aqua>Hai lasciato la coda.</aqua>"
+match:
+  starting: "<yellow><bold>Match: <player_a> vs <player_b></bold></yellow>"
+  countdown: "<yellow><bold>Match tra <seconds>s</bold></yellow>"
+  fight: "<gold><bold>FIGHT!</bold></gold>"
+  winner: "<green><bold><winner></bold></green> <gray>ha sconfitto</gray> <red><loser></red>"
+tournament:
+  winner: "<gold><bold><player> vince il torneo!</bold></gold>"
+  end: "<yellow>Torneo terminato.</yellow>"
+player:
+  eliminated: "<red><player> eliminato.</red>"
+stats:
+  header: "<gold><b>Statistiche di <player>:</b></gold>"
+  line: "<gray>Vittorie:</gray> <green><wins></green>  <gray>Sconfitte:</gray> <red><losses></red>  <gray>Streak:</gray> <yellow><streak></yellow>"
+scoreboard:
+  title: "<gold><b>Sumo</b></gold>"
+  arena: "<gray>Arena:</gray> <yellow><id></yellow>"
+  players: "<gray>Giocatori:</gray> <green><count></green>"
+help:
+  header: "<gold><b>Comandi Sumo</b></gold>"
+  line: "<yellow><usage></yellow> <gray>-</gray> <description>"
+force:
+  start-ok: "<green>Torneo avviato nell'arena <yellow><id></yellow>.</green>"
+  start-fail: "<red>Impossibile avviare il torneo nell'arena <yellow><id></yellow>.</red>"
+  stop-ok: "<green>Torneo fermato nell'arena <yellow><id></yellow>.</green>"
