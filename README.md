@@ -106,7 +106,7 @@ The shaded jar lands in `build/libs/sumo-<version>.jar`.
 ./gradlew runServer
 ```
 
-Spawns a Paper 1.20.6 dev server in `./run/` with the plugin pre-loaded. Re-run after editing. For remote debug attach on port `5005`:
+Spawns a Paper 1.21.11 dev server in `./run/` with the plugin pre-loaded. Re-run after editing. For remote debug attach on port `5005`:
 
 ```bash
 ./gradlew runServer --debug-jvm

@@ -20,7 +20,7 @@ Thanks for your interest! Here's how to get set up.
 ./gradlew runServer
 ```
 
-This launches a temporary Paper 1.20.6 server in `./run/` with the plugin pre-loaded. Edit any file → re-run.
+This launches a temporary Paper 1.21.11 server in `./run/` with the plugin pre-loaded. Edit any file → re-run.
 
 Attach a debugger on port `5005`:
 
