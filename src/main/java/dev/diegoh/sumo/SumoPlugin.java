@@ -1,23 +1,135 @@
 package dev.diegoh.sumo;
 
-import org.bukkit.command.CommandExecutor;
+import dev.diegoh.sumo.arena.ArenaRepository;
+import dev.diegoh.sumo.arena.ArenaService;
+import dev.diegoh.sumo.command.SumoCommand;
+import dev.diegoh.sumo.command.sub.JoinSub;
+import dev.diegoh.sumo.command.sub.LeaveSub;
+import dev.diegoh.sumo.command.sub.ListSub;
+import dev.diegoh.sumo.command.sub.ReloadSub;
+import dev.diegoh.sumo.command.sub.StatsSub;
+import dev.diegoh.sumo.command.sub.admin.ArenaCreateSub;
+import dev.diegoh.sumo.command.sub.admin.ArenaDeleteSub;
+import dev.diegoh.sumo.command.sub.admin.ArenaSetBoundsSub;
+import dev.diegoh.sumo.command.sub.admin.ArenaSetKnockbackSub;
+import dev.diegoh.sumo.command.sub.admin.ArenaSetLobbySub;
+import dev.diegoh.sumo.command.sub.admin.ArenaSetSpawnSub;
+import dev.diegoh.sumo.command.sub.admin.ForceStartSub;
+import dev.diegoh.sumo.command.sub.admin.ForceStopSub;
+import dev.diegoh.sumo.config.ConfigLoader;
+import dev.diegoh.sumo.config.PluginConfig;
+import dev.diegoh.sumo.game.GameOrchestrator;
+import dev.diegoh.sumo.i18n.LocaleResolver;
+import dev.diegoh.sumo.i18n.MessageKey;
+import dev.diegoh.sumo.i18n.Messages;
+import dev.diegoh.sumo.listener.BoundsListener;
+import dev.diegoh.sumo.listener.CombatListener;
+import dev.diegoh.sumo.listener.ConnectionListener;
+import dev.diegoh.sumo.listener.ProtectionListener;
+import dev.diegoh.sumo.player.InventoryStore;
+import dev.diegoh.sumo.player.SessionRegistry;
+import dev.diegoh.sumo.queue.QueueService;
+import dev.diegoh.sumo.stats.SqlStatsRepository;
+import dev.diegoh.sumo.stats.StatsRepository;
+import dev.diegoh.sumo.stats.StatsService;
+import dev.diegoh.sumo.util.AdventureUtil;
+import java.nio.file.Path;
+import java.util.Locale;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SumoPlugin extends JavaPlugin {
+    private AdventureUtil adventure;
+    private StatsRepository statsRepository;
+    private GameOrchestrator orchestrator;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        registerCommands();
+        PluginConfig pluginConfig = ConfigLoader.load(getConfig());
+
+        adventure = new AdventureUtil(this);
+        Messages messages = new Messages(this, pluginConfig.defaultLocale());
+        LocaleResolver localeResolver =
+                new LocaleResolver(pluginConfig.defaultLocale(), pluginConfig.followPlayerLocale());
+
+        statsRepository = createStatsRepository(pluginConfig);
+        statsRepository.init();
+        StatsService statsService = new StatsService(statsRepository);
+
+        Path arenasDir = getDataFolder().toPath().resolve("arenas");
+        ArenaRepository arenaRepository = new ArenaRepository(arenasDir, getServer());
+        ArenaService arenaService = new ArenaService(arenaRepository);
+
+        InventoryStore inventoryStore = new InventoryStore();
+        SessionRegistry registry = new SessionRegistry();
+        orchestrator = new GameOrchestrator(this, inventoryStore, registry);
+        // QueueService initialized but not yet wired into command flow (planned for future iteration).
+        new QueueService();
+
+        SumoCommand root =
+                new SumoCommand(messages, localeResolver, adventure)
+                        .register(new JoinSub(arenaService, orchestrator, messages, localeResolver, adventure))
+                        .register(new LeaveSub(orchestrator, messages, localeResolver, adventure))
+                        .register(new ListSub(arenaService, orchestrator, messages, localeResolver, adventure))
+                        .register(new StatsSub(statsService, messages, localeResolver, adventure))
+                        .register(
+                                new ReloadSub(
+                                        messages, arenaRepository, this, localeResolver, adventure))
+                        .register(
+                                new ArenaCreateSub(
+                                        arenaService, pluginConfig, messages, localeResolver, adventure))
+                        .register(new ArenaDeleteSub(arenaService, messages, localeResolver, adventure))
+                        .register(
+                                new ArenaSetSpawnSub(arenaService, messages, localeResolver, adventure))
+                        .register(
+                                new ArenaSetLobbySub(arenaService, messages, localeResolver, adventure))
+                        .register(
+                                new ArenaSetBoundsSub(arenaService, messages, localeResolver, adventure))
+                        .register(
+                                new ArenaSetKnockbackSub(
+                                        arenaService, messages, localeResolver, adventure))
+                        .register(
+                                new ForceStartSub(
+                                        orchestrator, arenaService, messages, localeResolver, adventure))
+                        .register(
+                                new ForceStopSub(
+                                        orchestrator, arenaService, messages, localeResolver, adventure));
+        getCommand("sumo").setExecutor(root);
+        getCommand("sumo").setTabCompleter(root);
+
+        getServer().getPluginManager().registerEvents(new ConnectionListener(orchestrator), this);
+        getServer().getPluginManager().registerEvents(new ProtectionListener(orchestrator), this);
+        getServer().getPluginManager().registerEvents(new BoundsListener(orchestrator), this);
+        getServer().getPluginManager().registerEvents(new CombatListener(orchestrator), this);
+
+        adventure.audiences().console().sendMessage(messages.get(Locale.US, MessageKey.PLUGIN_ENABLED));
     }
 
-    private void registerCommands() {
-        getCommand("sumo")
-                .setExecutor(
-                        (CommandExecutor)
-                                (sender, cmd, label, args) -> {
-                                    sender.sendMessage("Sumo loaded — commands coming soon.");
-                                    return true;
-                                });
+    @Override
+    public void onDisable() {
+        if (orchestrator != null) orchestrator.shutdownAll();
+        if (statsRepository != null) statsRepository.close();
+        if (adventure != null) adventure.close();
+    }
+
+    private StatsRepository createStatsRepository(PluginConfig config) {
+        return switch (config.databaseDriver()) {
+            case SQLITE -> SqlStatsRepository.sqlite(
+                    "jdbc:sqlite:" + getDataFolder().toPath().resolve(config.sqliteFile()));
+            case MYSQL -> SqlStatsRepository.mysql(
+                    "jdbc:mariadb://"
+                            + config.mysqlHost()
+                            + ":"
+                            + config.mysqlPort()
+                            + "/"
+                            + config.mysqlDatabase()
+                            + "?useSsl="
+                            + config.mysqlUseSsl(),
+                    config.mysqlUsername(),
+                    config.mysqlPassword(),
+                    config.poolMaxSize(),
+                    config.poolMinIdle(),
+                    config.poolConnectionTimeoutMs());
+        };
     }
 }
