@@ -5,6 +5,9 @@ out/
 *.jar
 *.class
 
+# Legacy reference plugin (kept locally for parity checks)
+/sumo.jar
+
 # Gradle
 .gradle/
 gradle-app.setting
