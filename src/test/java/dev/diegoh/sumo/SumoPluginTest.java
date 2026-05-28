@@ -10,28 +10,28 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SumoPluginTest {
-    private ServerMock server;
-    private SumoPlugin plugin;
+  private ServerMock server;
+  private SumoPlugin plugin;
 
-    @BeforeEach
-    void setUp() {
-        server = MockBukkit.mock();
-        plugin = MockBukkit.load(SumoPlugin.class);
-    }
+  @BeforeEach
+  void setUp() {
+    server = MockBukkit.mock();
+    plugin = MockBukkit.load(SumoPlugin.class);
+  }
 
-    @AfterEach
-    void tearDown() {
-        MockBukkit.unmock();
-    }
+  @AfterEach
+  void tearDown() {
+    MockBukkit.unmock();
+  }
 
-    @Test
-    void pluginEnablesSuccessfully() {
-        assertNotNull(plugin);
-        assertTrue(plugin.isEnabled());
-    }
+  @Test
+  void pluginEnablesSuccessfully() {
+    assertNotNull(plugin);
+    assertTrue(plugin.isEnabled());
+  }
 
-    @Test
-    void rootCommandRegistered() {
-        assertNotNull(server.getPluginCommand("sumo"));
-    }
+  @Test
+  void rootCommandRegistered() {
+    assertNotNull(server.getPluginCommand("sumo"));
+  }
 }

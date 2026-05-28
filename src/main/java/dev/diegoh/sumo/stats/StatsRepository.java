@@ -4,12 +4,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface StatsRepository extends AutoCloseable {
-    CompletableFuture<PlayerStats> load(UUID uuid);
+  CompletableFuture<PlayerStats> load(UUID uuid);
 
-    CompletableFuture<Void> save(PlayerStats stats);
+  CompletableFuture<Void> save(PlayerStats stats);
 
-    void init();
+  void init();
 
-    @Override
-    void close();
+  @Override
+  void close();
 }

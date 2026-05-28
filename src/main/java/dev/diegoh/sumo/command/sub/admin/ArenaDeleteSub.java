@@ -13,67 +13,66 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 public final class ArenaDeleteSub implements SubCommand {
-    private final ArenaService arenas;
-    private final Messages messages;
-    private final LocaleResolver localeResolver;
-    private final AdventureUtil adventure;
+  private final ArenaService arenas;
+  private final Messages messages;
+  private final LocaleResolver localeResolver;
+  private final AdventureUtil adventure;
 
-    public ArenaDeleteSub(
-            ArenaService arenas,
-            Messages messages,
-            LocaleResolver localeResolver,
-            AdventureUtil adventure) {
-        this.arenas = arenas;
-        this.messages = messages;
-        this.localeResolver = localeResolver;
-        this.adventure = adventure;
-    }
+  public ArenaDeleteSub(
+      ArenaService arenas,
+      Messages messages,
+      LocaleResolver localeResolver,
+      AdventureUtil adventure) {
+    this.arenas = arenas;
+    this.messages = messages;
+    this.localeResolver = localeResolver;
+    this.adventure = adventure;
+  }
 
-    @Override
-    public String name() {
-        return "delete";
-    }
+  @Override
+  public String name() {
+    return "delete";
+  }
 
-    @Override
-    public String permission() {
-        return "sumo.admin";
-    }
+  @Override
+  public String permission() {
+    return "sumo.admin";
+  }
 
-    @Override
-    public String usage() {
-        return "/sumo delete <id>";
-    }
+  @Override
+  public String usage() {
+    return "/sumo delete <id>";
+  }
 
-    @Override
-    public String descriptionKey() {
-        return "Delete an arena.";
-    }
+  @Override
+  public String descriptionKey() {
+    return "Delete an arena.";
+  }
 
-    @Override
-    public boolean playerOnly() {
-        return false;
-    }
+  @Override
+  public boolean playerOnly() {
+    return false;
+  }
 
-    @Override
-    public void execute(CommandSender sender, String[] args) {
-        if (args.length < 1) return;
-        boolean ok = arenas.delete(args[0]);
-        var key = ok ? MessageKey.ARENA_DELETED : MessageKey.ARENA_NOT_FOUND;
-        adventure
-                .audiences()
-                .sender(sender)
-                .sendMessage(
-                        messages.get(
-                                localeResolver.resolve(sender), key, Placeholder.parsed("id", args[0])));
-    }
+  @Override
+  public void execute(CommandSender sender, String[] args) {
+    if (args.length < 1) return;
+    boolean ok = arenas.delete(args[0]);
+    var key = ok ? MessageKey.ARENA_DELETED : MessageKey.ARENA_NOT_FOUND;
+    adventure
+        .audiences()
+        .sender(sender)
+        .sendMessage(
+            messages.get(localeResolver.resolve(sender), key, Placeholder.parsed("id", args[0])));
+  }
 
-    @Override
-    public List<String> complete(CommandSender sender, String[] args) {
-        if (args.length == 1) {
-            List<String> ids = new ArrayList<>();
-            arenas.all().forEach(a -> ids.add(a.id()));
-            return StringUtil.copyPartialMatches(args[0], ids, new ArrayList<>());
-        }
-        return List.of();
+  @Override
+  public List<String> complete(CommandSender sender, String[] args) {
+    if (args.length == 1) {
+      List<String> ids = new ArrayList<>();
+      arenas.all().forEach(a -> ids.add(a.id()));
+      return StringUtil.copyPartialMatches(args[0], ids, new ArrayList<>());
     }
+    return List.of();
+  }
 }

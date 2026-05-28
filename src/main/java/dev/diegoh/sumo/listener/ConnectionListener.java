@@ -6,14 +6,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class ConnectionListener implements Listener {
-    private final GameOrchestrator orchestrator;
+  private final GameOrchestrator orchestrator;
 
-    public ConnectionListener(GameOrchestrator orchestrator) {
-        this.orchestrator = orchestrator;
-    }
+  public ConnectionListener(GameOrchestrator orchestrator) {
+    this.orchestrator = orchestrator;
+  }
 
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        orchestrator.leave(event.getPlayer());
-    }
+  @EventHandler
+  public void onQuit(PlayerQuitEvent event) {
+    orchestrator.leave(event.getPlayer());
+  }
 }

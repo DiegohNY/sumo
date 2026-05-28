@@ -16,103 +16,99 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public final class ArenaCreateSub implements SubCommand {
-    private final ArenaService arenas;
-    private final PluginConfig config;
-    private final Messages messages;
-    private final LocaleResolver localeResolver;
-    private final AdventureUtil adventure;
+  private final ArenaService arenas;
+  private final PluginConfig config;
+  private final Messages messages;
+  private final LocaleResolver localeResolver;
+  private final AdventureUtil adventure;
 
-    public ArenaCreateSub(
-            ArenaService arenas,
-            PluginConfig config,
-            Messages messages,
-            LocaleResolver localeResolver,
-            AdventureUtil adventure) {
-        this.arenas = arenas;
-        this.config = config;
-        this.messages = messages;
-        this.localeResolver = localeResolver;
-        this.adventure = adventure;
-    }
+  public ArenaCreateSub(
+      ArenaService arenas,
+      PluginConfig config,
+      Messages messages,
+      LocaleResolver localeResolver,
+      AdventureUtil adventure) {
+    this.arenas = arenas;
+    this.config = config;
+    this.messages = messages;
+    this.localeResolver = localeResolver;
+    this.adventure = adventure;
+  }
 
-    @Override
-    public String name() {
-        return "create";
-    }
+  @Override
+  public String name() {
+    return "create";
+  }
 
-    @Override
-    public String permission() {
-        return "sumo.admin";
-    }
+  @Override
+  public String permission() {
+    return "sumo.admin";
+  }
 
-    @Override
-    public String usage() {
-        return "/sumo create <id>";
-    }
+  @Override
+  public String usage() {
+    return "/sumo create <id>";
+  }
 
-    @Override
-    public String descriptionKey() {
-        return "Create an arena (uses your current location).";
-    }
+  @Override
+  public String descriptionKey() {
+    return "Create an arena (uses your current location).";
+  }
 
-    @Override
-    public boolean playerOnly() {
-        return true;
-    }
+  @Override
+  public boolean playerOnly() {
+    return true;
+  }
 
-    @Override
-    public void execute(CommandSender sender, String[] args) {
-        Player p = (Player) sender;
-        if (args.length < 1) {
-            adventure
-                    .audiences()
-                    .player(p)
-                    .sendMessage(
-                            messages.get(
-                                    localeResolver.resolve(p),
-                                    MessageKey.INVALID_USAGE,
-                                    "usage",
-                                    usage()));
-            return;
-        }
-        var loc = p.getLocation();
-        Arena.Builder builder =
-                Arena.builder()
-                        .spawnA(loc)
-                        .spawnB(loc)
-                        .lobby(loc)
-                        .bounds(ArenaBounds.cylinder(loc, 15.0))
-                        .knockback(
-                                new KnockbackConfig(
-                                        config.defaultKnockbackStrength(),
-                                        config.defaultKnockbackVertical(),
-                                        config.defaultKnockbackFriction()))
-                        .minPlayers(config.defaultMinPlayers())
-                        .maxPlayers(config.defaultMaxPlayers());
-        var created = arenas.create(args[0], builder);
-        if (created.isEmpty()) {
-            adventure
-                    .audiences()
-                    .player(p)
-                    .sendMessage(
-                            messages.get(
-                                    localeResolver.resolve(p),
-                                    MessageKey.ARENA_NOT_FOUND,
-                                    Placeholder.parsed("id", args[0])));
-            return;
-        }
-        adventure
-                .audiences()
-                .player(p)
-                .sendMessage(
-                        messages.get(
-                                localeResolver.resolve(p),
-                                MessageKey.ARENA_CREATED,
-                                Placeholder.parsed("id", args[0])));
+  @Override
+  public void execute(CommandSender sender, String[] args) {
+    Player p = (Player) sender;
+    if (args.length < 1) {
+      adventure
+          .audiences()
+          .player(p)
+          .sendMessage(
+              messages.get(localeResolver.resolve(p), MessageKey.INVALID_USAGE, "usage", usage()));
+      return;
     }
+    var loc = p.getLocation();
+    Arena.Builder builder =
+        Arena.builder()
+            .spawnA(loc)
+            .spawnB(loc)
+            .lobby(loc)
+            .bounds(ArenaBounds.cylinder(loc, 15.0))
+            .knockback(
+                new KnockbackConfig(
+                    config.defaultKnockbackStrength(),
+                    config.defaultKnockbackVertical(),
+                    config.defaultKnockbackFriction()))
+            .minPlayers(config.defaultMinPlayers())
+            .maxPlayers(config.defaultMaxPlayers());
+    var created = arenas.create(args[0], builder);
+    if (created.isEmpty()) {
+      adventure
+          .audiences()
+          .player(p)
+          .sendMessage(
+              messages.get(
+                  localeResolver.resolve(p),
+                  MessageKey.ARENA_NOT_FOUND,
+                  Placeholder.parsed("id", args[0])));
+      return;
+    }
+    adventure
+        .audiences()
+        .player(p)
+        .sendMessage(
+            messages.get(
+                localeResolver.resolve(p),
+                MessageKey.ARENA_CREATED,
+                Placeholder.parsed("id", args[0])));
+  }
 
-    @Override
-    public List<String> complete(CommandSender sender, String[] args) {
-        return List.of();
-    }
+  @Override
+  public List<String> complete(CommandSender sender, String[] args) {
+    return List.of();
+  }
 }

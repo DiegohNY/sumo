@@ -16,31 +16,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CombatListenerTest {
-    private ServerMock server;
-    private SumoPlugin plugin;
-    private GameOrchestrator orchestrator;
+  private ServerMock server;
+  private SumoPlugin plugin;
+  private GameOrchestrator orchestrator;
 
-    @BeforeEach
-    void setUp() {
-        server = MockBukkit.mock();
-        server.addSimpleWorld("world");
-        plugin = MockBukkit.load(SumoPlugin.class);
-        orchestrator = new GameOrchestrator(plugin, new InventoryStore(), new SessionRegistry());
-    }
+  @BeforeEach
+  void setUp() {
+    server = MockBukkit.mock();
+    server.addSimpleWorld("world");
+    plugin = MockBukkit.load(SumoPlugin.class);
+    orchestrator = new GameOrchestrator(plugin, new InventoryStore(), new SessionRegistry());
+  }
 
-    @AfterEach
-    void tearDown() {
-        MockBukkit.unmock();
-    }
+  @AfterEach
+  void tearDown() {
+    MockBukkit.unmock();
+  }
 
-    @Test
-    void damageBetweenNonGamePlayersIsCancelled() {
-        CombatListener listener = new CombatListener(orchestrator);
-        PlayerMock a = server.addPlayer();
-        PlayerMock b = server.addPlayer();
-        EntityDamageByEntityEvent event =
-                new EntityDamageByEntityEvent(a, b, DamageCause.ENTITY_ATTACK, 1.0);
-        listener.onHit(event);
-        assertTrue(event.isCancelled());
-    }
+  @Test
+  void damageBetweenNonGamePlayersIsCancelled() {
+    CombatListener listener = new CombatListener(orchestrator);
+    PlayerMock a = server.addPlayer();
+    PlayerMock b = server.addPlayer();
+    EntityDamageByEntityEvent event =
+        new EntityDamageByEntityEvent(a, b, DamageCause.ENTITY_ATTACK, 1.0);
+    listener.onHit(event);
+    assertTrue(event.isCancelled());
+  }
 }

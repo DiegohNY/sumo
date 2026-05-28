@@ -10,28 +10,28 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public final class BoundsListener implements Listener {
-    private final GameOrchestrator orchestrator;
+  private final GameOrchestrator orchestrator;
 
-    public BoundsListener(GameOrchestrator orchestrator) {
-        this.orchestrator = orchestrator;
-    }
+  public BoundsListener(GameOrchestrator orchestrator) {
+    this.orchestrator = orchestrator;
+  }
 
-    @EventHandler
-    public void onMove(PlayerMoveEvent event) {
-        Player p = event.getPlayer();
-        GameSession s = orchestrator.sessionOf(p).orElse(null);
-        if (s == null) return;
-        if (event.getTo() == null) return;
-        if (s.state() == GameState.COUNTDOWN) {
-            event.setCancelled(true);
-            return;
-        }
-        if (s.state() != GameState.ACTIVE) return;
-        boolean outOfBounds = !s.arena().bounds().contains(event.getTo());
-        boolean inWater = event.getTo().getBlock().getType() == Material.WATER;
-        if (outOfBounds || inWater) {
-            s.recordElimination(p.getUniqueId());
-            p.teleport(s.arena().lobby());
-        }
+  @EventHandler
+  public void onMove(PlayerMoveEvent event) {
+    Player p = event.getPlayer();
+    GameSession s = orchestrator.sessionOf(p).orElse(null);
+    if (s == null) return;
+    if (event.getTo() == null) return;
+    if (s.state() == GameState.COUNTDOWN) {
+      event.setCancelled(true);
+      return;
     }
+    if (s.state() != GameState.ACTIVE) return;
+    boolean outOfBounds = !s.arena().bounds().contains(event.getTo());
+    boolean inWater = event.getTo().getBlock().getType() == Material.WATER;
+    if (outOfBounds || inWater) {
+      s.recordElimination(p.getUniqueId());
+      p.teleport(s.arena().lobby());
+    }
+  }
 }

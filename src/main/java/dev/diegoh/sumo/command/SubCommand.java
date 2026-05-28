@@ -4,17 +4,17 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 public interface SubCommand {
-    String name();
+  String name();
 
-    String permission();
+  String permission();
 
-    String usage();
+  String usage();
 
-    String descriptionKey();
+  String descriptionKey();
 
-    boolean playerOnly();
+  boolean playerOnly();
 
-    void execute(CommandSender sender, String[] args);
+  void execute(CommandSender sender, String[] args);
 
-    List<String> complete(CommandSender sender, String[] args);
+  List<String> complete(CommandSender sender, String[] args);
 }

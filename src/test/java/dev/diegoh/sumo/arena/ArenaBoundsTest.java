@@ -11,36 +11,36 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ArenaBoundsTest {
-    private ServerMock server;
-    private WorldMock world;
+  private ServerMock server;
+  private WorldMock world;
 
-    @BeforeEach
-    void setUp() {
-        server = MockBukkit.mock();
-        world = server.addSimpleWorld("world");
-    }
+  @BeforeEach
+  void setUp() {
+    server = MockBukkit.mock();
+    world = server.addSimpleWorld("world");
+  }
 
-    @AfterEach
-    void tearDown() {
-        MockBukkit.unmock();
-    }
+  @AfterEach
+  void tearDown() {
+    MockBukkit.unmock();
+  }
 
-    @Test
-    void cylinderContainsCenter() {
-        ArenaBounds bounds = ArenaBounds.cylinder(new Location(world, 0, 64, 0), 10.0);
-        assertTrue(bounds.contains(new Location(world, 0, 64, 0)));
-    }
+  @Test
+  void cylinderContainsCenter() {
+    ArenaBounds bounds = ArenaBounds.cylinder(new Location(world, 0, 64, 0), 10.0);
+    assertTrue(bounds.contains(new Location(world, 0, 64, 0)));
+  }
 
-    @Test
-    void cylinderExcludesOutside() {
-        ArenaBounds bounds = ArenaBounds.cylinder(new Location(world, 0, 64, 0), 5.0);
-        assertFalse(bounds.contains(new Location(world, 10, 64, 0)));
-    }
+  @Test
+  void cylinderExcludesOutside() {
+    ArenaBounds bounds = ArenaBounds.cylinder(new Location(world, 0, 64, 0), 5.0);
+    assertFalse(bounds.contains(new Location(world, 10, 64, 0)));
+  }
 
-    @Test
-    void cylinderRejectsOtherWorld() {
-        ArenaBounds bounds = ArenaBounds.cylinder(new Location(world, 0, 64, 0), 5.0);
-        WorldMock other = server.addSimpleWorld("nether");
-        assertFalse(bounds.contains(new Location(other, 0, 64, 0)));
-    }
+  @Test
+  void cylinderRejectsOtherWorld() {
+    ArenaBounds bounds = ArenaBounds.cylinder(new Location(world, 0, 64, 0), 5.0);
+    WorldMock other = server.addSimpleWorld("nether");
+    assertFalse(bounds.contains(new Location(other, 0, 64, 0)));
+  }
 }

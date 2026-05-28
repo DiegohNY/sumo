@@ -13,40 +13,40 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class InventoryStoreTest {
-    private ServerMock server;
-    private InventoryStore store;
+  private ServerMock server;
+  private InventoryStore store;
 
-    @BeforeEach
-    void setUp() {
-        server = MockBukkit.mock();
-        store = new InventoryStore();
-    }
+  @BeforeEach
+  void setUp() {
+    server = MockBukkit.mock();
+    store = new InventoryStore();
+  }
 
-    @AfterEach
-    void tearDown() {
-        MockBukkit.unmock();
-    }
+  @AfterEach
+  void tearDown() {
+    MockBukkit.unmock();
+  }
 
-    @Test
-    void capturedInventoryRestoresContents() {
-        PlayerMock p = server.addPlayer();
-        p.getInventory().setItem(0, new ItemStack(Material.DIAMOND_SWORD));
-        p.setGameMode(GameMode.SURVIVAL);
+  @Test
+  void capturedInventoryRestoresContents() {
+    PlayerMock p = server.addPlayer();
+    p.getInventory().setItem(0, new ItemStack(Material.DIAMOND_SWORD));
+    p.setGameMode(GameMode.SURVIVAL);
 
-        store.capture(p);
-        p.getInventory().clear();
-        p.setGameMode(GameMode.SPECTATOR);
+    store.capture(p);
+    p.getInventory().clear();
+    p.setGameMode(GameMode.SPECTATOR);
 
-        store.restore(p);
-        assertEquals(Material.DIAMOND_SWORD, p.getInventory().getItem(0).getType());
-        assertEquals(GameMode.SURVIVAL, p.getGameMode());
-    }
+    store.restore(p);
+    assertEquals(Material.DIAMOND_SWORD, p.getInventory().getItem(0).getType());
+    assertEquals(GameMode.SURVIVAL, p.getGameMode());
+  }
 
-    @Test
-    void restoreWithoutCaptureIsNoop() {
-        PlayerMock p = server.addPlayer();
-        p.getInventory().setItem(0, new ItemStack(Material.STICK));
-        store.restore(p);
-        assertEquals(Material.STICK, p.getInventory().getItem(0).getType());
-    }
+  @Test
+  void restoreWithoutCaptureIsNoop() {
+    PlayerMock p = server.addPlayer();
+    p.getInventory().setItem(0, new ItemStack(Material.STICK));
+    store.restore(p);
+    assertEquals(Material.STICK, p.getInventory().getItem(0).getType());
+  }
 }
