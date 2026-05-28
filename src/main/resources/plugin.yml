@@ -5,6 +5,13 @@ api-version: '1.20'
 author: diegoh
 description: Multi-arena Sumo minigame with persistent stats and i18n.
 website: https://www.spigotmc.org/resources/sumo.45639/
+
+# Runtime-resolved libraries (server downloads from Maven Central on first load).
+# Keeps the shipped jar small and avoids shading native binaries.
+libraries:
+  - com.zaxxer:HikariCP:5.1.0
+  - org.xerial:sqlite-jdbc:3.46.0.0
+  - org.mariadb.jdbc:mariadb-java-client:3.4.1
 commands:
   sumo:
     description: Main command for the Sumo plugin

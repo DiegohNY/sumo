@@ -31,18 +31,25 @@ repositories {
 dependencies {
     compileOnly(libs.spigot.api)
 
+    // Shaded (server JVM does not provide these classes).
     implementation(libs.adventure.api)
     implementation(libs.adventure.minimessage)
     implementation(libs.adventure.legacy)
     implementation(libs.adventure.platform.bukkit)
-    implementation(libs.hikari)
-    implementation(libs.sqlite)
-    implementation(libs.mariadb)
+
+    // Declared via plugin.yml `libraries:` so the server downloads them at runtime.
+    // Listed compileOnly here so we can still compile against them locally.
+    compileOnly(libs.hikari)
+    compileOnly(libs.sqlite)
+    compileOnly(libs.mariadb)
 
     testImplementation(libs.spigot.api)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.adventure.plain)
     testImplementation(libs.mockbukkit)
+    testImplementation(libs.hikari)
+    testImplementation(libs.sqlite)
+    testImplementation(libs.mariadb)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -56,13 +63,6 @@ tasks.shadowJar {
     archiveClassifier.set("")
     val shadeBase = "${project.group}.shadow"
     relocate("net.kyori", "$shadeBase.kyori")
-    relocate("com.zaxxer.hikari", "$shadeBase.hikari")
-    relocate("org.sqlite", "$shadeBase.sqlite")
-    relocate("org.mariadb", "$shadeBase.mariadb")
-    minimize {
-        exclude(dependency("org.sqlite:sqlite-jdbc:.*"))
-        exclude(dependency("org.mariadb.jdbc:mariadb-java-client:.*"))
-    }
 }
 
 tasks.build { dependsOn(tasks.shadowJar) }
