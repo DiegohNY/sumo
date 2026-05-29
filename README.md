@@ -116,7 +116,7 @@ Spawns a Paper 1.21.11 dev server in `./run/` with the plugin pre-loaded. Re-run
 
 ## Roadmap
 
-See the `[Unreleased]` section of [CHANGELOG.md](CHANGELOG.md) for planned work (queue CLI, bStats, PlaceholderAPI, ELO, GUI selector, Brigadier-native commands, reconnect).
+See the `[Unreleased]` section of [CHANGELOG.md](CHANGELOG.md) for planned work (queue CLI, bStats, PlaceholderAPI, ELO leaderboard, tournament bracket, Brigadier-native commands, mid-match reconnect).
 
 ## Contributing
 
@@ -129,7 +129,7 @@ Found a vulnerability? Please follow [SECURITY.md](SECURITY.md) and do **not** o
 ## Support & contact
 
 - **Bug reports / feature requests:** [GitHub Issues](https://github.com/DiegohNY/sumo/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/DiegohNY/sumo/discussions) (enable in repo settings if missing)
+- **Questions & ideas:** [GitHub Discussions](https://github.com/DiegohNY/sumo/discussions)
 - **SpigotMC page:** <https://www.spigotmc.org/resources/sumo.45639/>
 - **Email:** diegosici@icloud.com
 - **Discord:** `@DiegohNY`
