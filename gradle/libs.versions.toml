@@ -1,6 +1,6 @@
 [versions]
 spigot = "1.20.1-R0.1-SNAPSHOT"
-adventure-api = "4.17.0"
+adventure-api = "5.1.1"
 adventure-platform = "4.3.4"
 hikari = "5.1.0"
 sqlite = "3.53.1.0"
