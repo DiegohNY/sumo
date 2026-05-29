@@ -3,6 +3,15 @@ package dev.diegoh.sumo.arena;
 import java.util.Objects;
 import org.bukkit.Location;
 
+/**
+ * An immutable description of one arena (ring): its two spawns, lobby, {@link ArenaBounds}, {@link
+ * KnockbackConfig} and player limits.
+ *
+ * <p>Built with the nested {@link Builder} and never mutated — to change an arena, take {@link
+ * #toBuilder()}, tweak it, and save the new instance. The constructor enforces the invariants
+ * (min/max players sane, all locations in the same world), so an {@code Arena} that exists is
+ * always valid.
+ */
 public final class Arena {
   private final String id;
   private final Location spawnA;

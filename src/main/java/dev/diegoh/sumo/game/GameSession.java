@@ -14,6 +14,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * Runs one tournament inside one {@link Arena}.
+ *
+ * <p>This is a small state machine. Players are added while the session is {@code WAITING}; calling
+ * {@link #startTournament()} pairs the first two into a {@link Match} and moves through {@link
+ * GameState} ({@code COUNTDOWN → ACTIVE → ENDING}). Each elimination (via {@link
+ * #recordElimination(UUID)}) advances to the next match until one fighter remains — the winner.
+ *
+ * <p>Inventories are snapshotted on join and restored on removal through the shared {@link
+ * InventoryStore}. Interested components (scoreboard, titles) can {@link #subscribe(Consumer)} to
+ * {@link SessionEvent}s instead of polling.
+ *
+ * <p>Not thread-safe: all gameplay runs on the server main thread.
+ */
 public final class GameSession {
   private final Plugin plugin;
   private final Arena arena;

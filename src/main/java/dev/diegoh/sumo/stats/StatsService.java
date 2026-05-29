@@ -5,6 +5,14 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The front door to player statistics, with a small in-memory cache.
+ *
+ * <p>Reads hit the cache first and only fall through to the {@link StatsRepository} (database) on a
+ * miss. Writes are write-through: the cache is updated immediately and the change is persisted
+ * asynchronously. All methods return a {@link java.util.concurrent.CompletableFuture} so callers
+ * never block the server main thread on I/O.
+ */
 public final class StatsService {
   private final StatsRepository repository;
   private final ConcurrentHashMap<UUID, PlayerStats> cache = new ConcurrentHashMap<>();

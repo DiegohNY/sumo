@@ -10,6 +10,13 @@ import java.util.function.Consumer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * Owns every live {@link GameSession} at once — one per arena.
+ *
+ * <p>This is the single place the rest of the plugin asks "is this player in a game, and which
+ * one?". A session is created lazily the first time someone joins an arena and removed when it
+ * empties. A player can only be in one session at a time, enforced through {@link SessionRegistry}.
+ */
 public final class GameOrchestrator {
   private final Plugin plugin;
   private final InventoryStore inventoryStore;

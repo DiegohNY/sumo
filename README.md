@@ -120,7 +120,7 @@ See the `[Unreleased]` section of [CHANGELOG.md](CHANGELOG.md) for planned work 
 
 ## Contributing
 
-Contributions welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style (Google Java Format), commit convention (Conventional Commits), and the testing policy. By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
+Contributions welcome. New to the codebase? Start with [ARCHITECTURE.md](ARCHITECTURE.md) — it maps out the packages and how a match flows, so you only need to understand the part you're touching. Then see [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style (Google Java Format), commit convention (Conventional Commits), and the testing policy. By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security
 
