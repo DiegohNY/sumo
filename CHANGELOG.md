@@ -6,13 +6,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
-### Added
-
-- Live session UI: action bar on join, titles on match start / FIGHT! / tournament end, chat broadcasts on elimination, auto-applied scoreboard sidebar that refreshes on every state change.
-- Typed `SessionEvent` stream with `subscribe(Consumer)` API on `GameSession` for any future presenter.
-- `/sumo menu` — chest-style arena selector with one color-coded item per arena (idle/waiting/countdown/active/ending). Toggle via `gui.enabled`.
-- Config keys: `scoreboard.enabled`, `gui.enabled`.
-
 ### Planned
 
 - CLI surface for the matchmaking queue (currently programmatic only).
@@ -22,6 +15,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Tournament bracket display.
 - Mid-match reconnect with reserved slot.
 - Brigadier-native commands for Paper.
+
+## [0.2.0] — 2026-05-29
+
+### Added
+
+- Live session UI: action bar on join, titles on match start / FIGHT! / tournament end, chat broadcasts on elimination, auto-applied scoreboard sidebar that refreshes on every state change.
+- Typed `SessionEvent` stream with `subscribe(Consumer)` API on `GameSession` for any future presenter.
+- `/sumo menu` — chest-style arena selector with one color-coded item per arena (idle/waiting/countdown/active/ending). Toggle via `gui.enabled`.
+- Config keys: `scoreboard.enabled`, `gui.enabled`.
+- Contributor docs: `ARCHITECTURE.md`, package-level Javadoc, and a pre-release smoke-test checklist.
+
+### Changed
+
+- Bumped `sqlite-jdbc` to 3.53.1.0, `mariadb-java-client` to 3.5.8, and CI actions (checkout v6, setup-java v5, upload-artifact v7, action-gh-release v3).
+
+### CI
+
+- 80% instruction-coverage gate on domain logic and auto-merge for Dependabot patch/minor updates.
 
 ## [0.1.0] — 2026-05-28
 
