@@ -88,6 +88,40 @@ tasks.jacocoTestReport {
     }
 }
 
+// Coverage gate. The presentation, command and wiring layers are exercised in-game (and via the
+// manual smoke test in CONTRIBUTING.md), not unit-tested, so they are excluded here. The remaining
+// domain logic (arena, game, stats, queue, config, i18n, player, util) must stay well covered.
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.test)
+    classDirectories.setFrom(
+        files(
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude(
+                        "dev/diegoh/sumo/SumoPlugin.class",
+                        "dev/diegoh/sumo/command/**",
+                        "dev/diegoh/sumo/gui/**",
+                        "dev/diegoh/sumo/ui/**",
+                        "dev/diegoh/sumo/scoreboard/**",
+                        "dev/diegoh/sumo/listener/**",
+                    )
+                }
+            },
+        ),
+    )
+    violationRules {
+        rule {
+            limit {
+                counter = "INSTRUCTION"
+                value = "COVEREDRATIO"
+                minimum = "0.80".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.named("check") { dependsOn(tasks.jacocoTestCoverageVerification) }
+
 tasks.runServer {
     minecraftVersion("1.21.11")
 }
