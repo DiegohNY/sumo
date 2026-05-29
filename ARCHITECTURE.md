@@ -1,7 +1,7 @@
 # Architecture
 
 This document explains how Sumo is put together so you can find your way around
-and contribute confidently — even if this is your first Bukkit plugin.
+the codebase and contribute confidently.
 
 ## The big picture
 
@@ -9,8 +9,8 @@ Sumo is a standard Bukkit/Spigot plugin. The server loads `SumoPlugin` (declared
 in `plugin.yml`), which wires everything together once on startup and tears it
 down on shutdown.
 
-We keep the design boring on purpose: small classes, one responsibility each,
-no clever magic. If you can read Java, you can read Sumo.
+The design is deliberately straightforward: small classes, one responsibility
+each, no hidden magic.
 
 ```
                        ┌─────────────────┐
