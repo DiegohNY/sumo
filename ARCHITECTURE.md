@@ -46,6 +46,8 @@ Two more groups plug into these services:
 | `stats` | Player statistics: the data (`PlayerStats`), the storage contract (`StatsRepository`), a SQL implementation (`SqlStatsRepository`), and a caching front (`StatsService`). |
 | `player` | Per-player helpers: inventory save/restore (`InventoryStore`) and a fast "which game is this player in?" lookup (`SessionRegistry`). |
 | `scoreboard` | The live sidebar (`ArenaScoreboard`). |
+| `ui` | Turns `SessionEvent`s into player-facing feedback — titles, action bars, scoreboard updates (`SessionUiPresenter`). |
+| `gui` | The chest-menu arena selector (`ArenaSelectorGui`) and its click handler (`MenuListener`). |
 | `i18n` | Translated text: message keys (`MessageKey`), the loader (`Messages`), and per-player language selection (`LocaleResolver`). |
 | `config` | Reading `config.yml` (`ConfigLoader` → `PluginConfig`) and converting locations to/from text (`LocationCodec`). |
 | `command` | The `/sumo` command, split into one small class per subcommand. |

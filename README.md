@@ -92,6 +92,20 @@ storage:
 
 Drop `plugins/Sumo/lang/messages_<locale>.yml` to add or override a locale. Existing keys override the bundled defaults; missing keys fall back to `en_US`. Bundled: `en_US`, `it_IT`. Contributions for additional locales welcome — see [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-language).
 
+## FAQ
+
+**Does it support multiple worlds?**
+Yes. Arenas can live in any world, and different arenas can be in different worlds (e.g. one in your hub, one in the nether). Just stand in the world you want and run `/sumo create <name>`. The only rule is that a single arena's two spawns and lobby must share the same world, since it's a 1v1 ring.
+
+**Can I run several arenas at the same time?**
+Yes — each arena runs its own independent game concurrently.
+
+**Do I need a database?**
+No. SQLite is built in and needs zero setup. Switch to MySQL/MariaDB only for networks or large player counts.
+
+**Are player inventories safe?**
+Yes. They're snapshotted on join and restored on leave, elimination or disconnect — even after a crash.
+
 ## Building
 
 Requires JDK 17.
