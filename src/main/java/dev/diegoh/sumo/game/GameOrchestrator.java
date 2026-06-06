@@ -143,12 +143,14 @@ public final class GameOrchestrator {
   }
 
   private void endSession(GameSession session) {
+    // Remove only if this is still the live session for the arena. Guards against a double end
+    // (forcestop + the scheduled end) and against tearing down a newer session for the same arena.
+    if (!byArena.remove(session.arena().id(), session)) return;
     for (var uuid : session.participants()) {
       Player p = plugin.getServer().getPlayer(uuid);
       if (p != null) inventoryStore.restore(p);
       releasePlayer(uuid);
     }
-    byArena.remove(session.arena().id());
   }
 
   /** Unbinds a player and clears their Sumo sidebar so they return to a normal state. */

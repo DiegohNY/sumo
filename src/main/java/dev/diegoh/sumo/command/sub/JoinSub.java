@@ -83,6 +83,8 @@ public final class JoinSub implements SubCommand {
                   Placeholder.parsed("id", args[0])));
       return;
     }
+    // Distinguish "you're already in a game" from "this arena can't be joined right now".
+    boolean alreadyInGame = orchestrator.sessionOf(p).isPresent();
     if (orchestrator.join(arena, p)) {
       adventure
           .audiences()
@@ -93,10 +95,8 @@ public final class JoinSub implements SubCommand {
                   MessageKey.JOIN_SUCCESS,
                   Placeholder.parsed("id", arena.id())));
     } else {
-      adventure
-          .audiences()
-          .player(p)
-          .sendMessage(messages.get(localeResolver.resolve(p), MessageKey.JOIN_ALREADY_IN_GAME));
+      MessageKey reason = alreadyInGame ? MessageKey.JOIN_ALREADY_IN_GAME : MessageKey.JOIN_FULL;
+      adventure.audiences().player(p).sendMessage(messages.get(localeResolver.resolve(p), reason));
     }
   }
 

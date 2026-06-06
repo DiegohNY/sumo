@@ -172,6 +172,15 @@ public final class SqlStatsRepository implements StatsRepository {
   @Override
   public void close() {
     io.shutdown();
+    try {
+      // Let queued saves (e.g. the last match's win/loss) finish before the pool closes.
+      if (!io.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+        io.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      io.shutdownNow();
+    }
     ds.close();
   }
 }

@@ -3,6 +3,7 @@ package dev.diegoh.sumo.gui;
 import dev.diegoh.sumo.arena.Arena;
 import dev.diegoh.sumo.arena.ArenaService;
 import dev.diegoh.sumo.game.GameOrchestrator;
+import dev.diegoh.sumo.game.GameSession;
 import dev.diegoh.sumo.game.GameState;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,9 +65,9 @@ public final class ArenaSelectorGui {
   }
 
   private ItemStack buildItem(Arena arena) {
-    GameState state =
-        orchestrator.sessionForArena(arena.id()).map(s -> s.state()).orElse(GameState.IDLE);
-    int count = orchestrator.sessionForArena(arena.id()).map(s -> s.participantCount()).orElse(0);
+    var session = orchestrator.sessionForArena(arena.id());
+    GameState state = session.map(GameSession::state).orElse(GameState.IDLE);
+    int count = session.map(GameSession::participantCount).orElse(0);
 
     Material material =
         switch (state) {

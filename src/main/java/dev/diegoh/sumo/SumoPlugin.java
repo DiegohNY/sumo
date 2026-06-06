@@ -136,7 +136,10 @@ public class SumoPlugin extends JavaPlugin {
     if (pluginConfig.guiEnabled()) {
       getServer()
           .getPluginManager()
-          .registerEvents(new MenuListener(gui, arenaService, orchestrator), this);
+          .registerEvents(
+              new MenuListener(
+                  gui, arenaService, orchestrator, messages, localeResolver, adventure),
+              this);
     }
 
     initMetrics(pluginConfig, arenaService);

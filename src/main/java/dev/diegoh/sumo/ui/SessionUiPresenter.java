@@ -135,8 +135,12 @@ public final class SessionUiPresenter {
             MessageKey.MATCH_WINNER,
             Placeholder.parsed("winner", winnerName),
             Placeholder.parsed("loser", loserName));
-    for (Player p : Bukkit.getOnlinePlayers()) {
+    // Scope to the people in this arena (plus the just-removed loser), not the whole server.
+    for (Player p : participantsPlayers()) {
       audience(p).sendMessage(msg);
+    }
+    if (loserPlayer != null) {
+      audience(loserPlayer).sendMessage(msg);
     }
     if (loserPlayer != null) {
       audience(loserPlayer)
@@ -151,9 +155,10 @@ public final class SessionUiPresenter {
     String name = winner != null ? winner.getName() : winnerId.toString();
     Component msg =
         messages.get(locale, MessageKey.TOURNAMENT_WINNER, Placeholder.parsed("player", name));
-    for (Player p : Bukkit.getOnlinePlayers()) {
+    for (Player p : participantsPlayers()) {
       audience(p).sendMessage(msg);
     }
+    if (winner != null) audience(winner).sendMessage(msg);
     Title times =
         Title.title(
             msg,

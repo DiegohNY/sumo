@@ -15,6 +15,8 @@ import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public final class ArenaRepository {
+  private static final java.util.regex.Pattern ID_PATTERN =
+      java.util.regex.Pattern.compile("[a-zA-Z0-9_-]{1,32}");
   private final Path directory;
   private final Server server;
   private final Map<String, Arena> cache = new HashMap<>();
@@ -86,6 +88,8 @@ public final class ArenaRepository {
     try {
       YamlConfiguration cfg = YamlConfiguration.loadConfiguration(f);
       String id = cfg.getString("id");
+      // Never trust an id read from a hand-edited file: it becomes a filename on save/delete.
+      if (id == null || !ID_PATTERN.matcher(id).matches()) return Optional.empty();
       Optional<Location> sa = LocationCodec.decode(cfg.getString("spawn-a"), server);
       Optional<Location> sb = LocationCodec.decode(cfg.getString("spawn-b"), server);
       Optional<Location> lo = LocationCodec.decode(cfg.getString("lobby"), server);
