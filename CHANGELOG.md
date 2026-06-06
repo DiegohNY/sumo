@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- **Auto-start matchmaking**: an arena starts on its own once it reaches `min-players` (after `join-period-seconds`), and immediately when it fills if `queue.auto-start-when-full` is set. `/sumo forcestart` still works for admins.
+- `/sumo setplayers <id> <min> <max>` to change an arena's player limits at runtime.
+- Optional **bStats** metrics (off until a service id is configured), reporting arena count, database driver and scoreboard usage.
+
 ### Fixed
 
 - Match countdown never ended, leaving both fighters frozen for the whole match (movement is blocked during the countdown). The COUNTDOWN → ACTIVE transition is now scheduled and runs after `defaults.match-countdown-seconds`, with a guard so a countdown from an interrupted match can't affect a later one.
@@ -17,6 +23,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Player stats were never recorded (always zero). Each finished match now records a win for the victor and a loss for the eliminated player.
 - Auto-fitted arena bounds are now much more generous (buffer raised and a minimum radius of 16) so a push no longer ejects a fighter on the first hit.
 - Added input guards: `/sumo setbounds` rejects a non-positive radius and `/sumo setkb` rejects invalid knockback values instead of throwing.
+- Inventories are restored on a clean server stop/disable and on rejoin after a mid-game disconnect, so items are no longer lost.
+- Fighters are now immune to all non-combat damage (lava, fire, magic, cactus, freeze, …) during a match, and start each match at full health and food.
+- Eliminated players are no longer teleported twice (they return to where they came from), and `/sumo forcestop` cleanly restores everyone and frees the arena.
+- Player stats use an atomic read-modify-write, preventing lost win/loss updates under concurrent matches.
+- Default knockback softened (strength 0.5, vertical 0.35) and auto-fitted bounds widened so a single push no longer ejects a fighter.
+- Null-world guards before teleports; joins are refused for arenas whose world isn't loaded.
 
 ### Planned
 

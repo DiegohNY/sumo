@@ -16,6 +16,7 @@ arena:
   lobby-set: "<green>Lobby impostata per l'arena <yellow><id></yellow>.</green>"
   bounds-set: "<green>Raggio impostato a <radius> per l'arena <yellow><id></yellow>.</green>"
   kb-set: "<green>Knockback impostato (s=<strength>, v=<vertical>, f=<friction>) per l'arena <yellow><id></yellow>.</green>"
+  players-set: "<green>Limiti giocatori impostati (min=<min>, max=<max>) per l'arena <yellow><id></yellow>.</green>"
 join:
   success: "<green>Entrato nell'arena <yellow><id></yellow>.</green>"
   already-in-game: "<red>Sei già in una partita.</red>"

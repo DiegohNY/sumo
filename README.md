@@ -57,6 +57,7 @@ Fast-paced 1v1 pushing minigame. Two players enter the ring; the one knocked int
 | `/sumo setlobby <id>` | Set lobby spawn. | `sumo.admin` |
 | `/sumo setbounds <id> <radius>` | Set arena cylinder radius (center = your location). | `sumo.admin` |
 | `/sumo setkb <id> <strength> <vertical> <friction>` | Tune per-arena knockback. | `sumo.admin` |
+| `/sumo setplayers <id> <min> <max>` | Set per-arena min/max players. | `sumo.admin` |
 | `/sumo forcestart <id>` | Force start a tournament. | `sumo.admin` |
 | `/sumo forcestop <id>` | Force stop a tournament. | `sumo.admin` |
 

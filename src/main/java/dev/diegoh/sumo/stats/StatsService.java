@@ -38,21 +38,26 @@ public final class StatsService {
   }
 
   public CompletableFuture<PlayerStats> recordWin(UUID uuid) {
-    return get(uuid)
-        .thenCompose(
-            s -> {
-              PlayerStats updated = s.withWin();
-              cache.put(uuid, updated);
-              return repository.save(updated).thenApply(v -> updated);
-            });
+    return update(uuid, PlayerStats::withWin);
   }
 
   public CompletableFuture<PlayerStats> recordLoss(UUID uuid) {
+    return update(uuid, PlayerStats::withLoss);
+  }
+
+  /**
+   * Loads the player into the cache, then applies the change atomically with {@link
+   * java.util.concurrent.ConcurrentHashMap#compute} so two near-simultaneous records can't read the
+   * same base value and clobber each other (no lost updates).
+   */
+  private CompletableFuture<PlayerStats> update(
+      UUID uuid, java.util.function.UnaryOperator<PlayerStats> change) {
     return get(uuid)
         .thenCompose(
-            s -> {
-              PlayerStats updated = s.withLoss();
-              cache.put(uuid, updated);
+            loaded -> {
+              PlayerStats updated =
+                  cache.compute(
+                      uuid, (k, current) -> change.apply(current == null ? loaded : current));
               return repository.save(updated).thenApply(v -> updated);
             });
   }

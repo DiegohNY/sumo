@@ -25,6 +25,9 @@ public final class GameOrchestrator {
   private final int endDelaySeconds;
   private final ConcurrentHashMap<String, GameSession> byArena = new ConcurrentHashMap<>();
   private Consumer<GameSession> onSessionCreated = s -> {};
+  private boolean autoStart = false;
+  private int joinPeriodSeconds = 30;
+  private boolean autoStartWhenFull = true;
 
   public GameOrchestrator(Plugin plugin, InventoryStore inventoryStore, SessionRegistry registry) {
     this(plugin, inventoryStore, registry, 5, 8);
@@ -45,6 +48,13 @@ public final class GameOrchestrator {
 
   public void setOnSessionCreated(Consumer<GameSession> hook) {
     this.onSessionCreated = hook == null ? s -> {} : hook;
+  }
+
+  /** Enables auto-start: a join timer runs once an arena reaches its minimum player count. */
+  public void configureAutoStart(boolean enabled, int joinPeriodSeconds, boolean startWhenFull) {
+    this.autoStart = enabled;
+    this.joinPeriodSeconds = Math.max(0, joinPeriodSeconds);
+    this.autoStartWhenFull = startWhenFull;
   }
 
   public boolean join(Arena arena, Player player) {
@@ -95,7 +105,41 @@ public final class GameOrchestrator {
     } else if (event instanceof SessionEvent.TournamentEnded) {
       long delayTicks = Math.max(0L, endDelaySeconds) * 20L;
       plugin.getServer().getScheduler().runTaskLater(plugin, () -> endSession(session), delayTicks);
+    } else if (event instanceof SessionEvent.PlayerJoined) {
+      maybeAutoStart(session);
     }
+  }
+
+  /**
+   * Starts the tournament automatically: immediately if the arena just filled, otherwise after a
+   * join period once the minimum player count is reached. Guarded so it only fires while still
+   * waiting with enough players.
+   */
+  private void maybeAutoStart(GameSession session) {
+    if (!autoStart || session.state() != GameState.WAITING) return;
+    int count = session.participantCount();
+    if (autoStartWhenFull && count >= session.arena().maxPlayers()) {
+      session.startTournament();
+    } else if (count == session.arena().minPlayers()) {
+      plugin
+          .getServer()
+          .getScheduler()
+          .runTaskLater(
+              plugin,
+              () -> {
+                if (session.state() == GameState.WAITING
+                    && session.participantCount() >= session.arena().minPlayers()) {
+                  session.startTournament();
+                }
+              },
+              Math.max(0L, joinPeriodSeconds) * 20L);
+    }
+  }
+
+  /** Immediately ends a session (admin forcestop): restores everyone and frees the arena. */
+  public void forceStop(String arenaId) {
+    GameSession session = byArena.get(arenaId);
+    if (session != null) endSession(session);
   }
 
   private void endSession(GameSession session) {

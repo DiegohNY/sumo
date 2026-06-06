@@ -14,6 +14,7 @@ import dev.diegoh.sumo.command.sub.admin.ArenaDeleteSub;
 import dev.diegoh.sumo.command.sub.admin.ArenaSetBoundsSub;
 import dev.diegoh.sumo.command.sub.admin.ArenaSetKnockbackSub;
 import dev.diegoh.sumo.command.sub.admin.ArenaSetLobbySub;
+import dev.diegoh.sumo.command.sub.admin.ArenaSetPlayersSub;
 import dev.diegoh.sumo.command.sub.admin.ArenaSetSpawnSub;
 import dev.diegoh.sumo.command.sub.admin.ForceStartSub;
 import dev.diegoh.sumo.command.sub.admin.ForceStopSub;
@@ -40,9 +41,16 @@ import dev.diegoh.sumo.ui.SessionUiPresenter;
 import dev.diegoh.sumo.util.AdventureUtil;
 import java.nio.file.Path;
 import java.util.Locale;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SumoPlugin extends JavaPlugin {
+  // bStats service id. Register the plugin at https://bstats.org to get one, then set it here.
+  // While 0, metrics stay off so nothing is sent.
+  private static final int BSTATS_PLUGIN_ID = 0;
+
   private AdventureUtil adventure;
   private StatsRepository statsRepository;
   private GameOrchestrator orchestrator;
@@ -74,6 +82,11 @@ public class SumoPlugin extends JavaPlugin {
             registry,
             pluginConfig.matchCountdownSeconds(),
             pluginConfig.endDelaySeconds());
+
+    orchestrator.configureAutoStart(
+        pluginConfig.autoStartEnabled(),
+        pluginConfig.joinPeriodSeconds(),
+        pluginConfig.autoStartWhenFull());
 
     Locale defaultLocale = parseLocale(pluginConfig.defaultLocale());
     StatsRecorder statsRecorder = new StatsRecorder(statsService, getLogger());
@@ -107,6 +120,7 @@ public class SumoPlugin extends JavaPlugin {
             .register(new ArenaSetLobbySub(arenaService, messages, localeResolver, adventure))
             .register(new ArenaSetBoundsSub(arenaService, messages, localeResolver, adventure))
             .register(new ArenaSetKnockbackSub(arenaService, messages, localeResolver, adventure))
+            .register(new ArenaSetPlayersSub(arenaService, messages, localeResolver, adventure))
             .register(
                 new ForceStartSub(orchestrator, arenaService, messages, localeResolver, adventure))
             .register(
@@ -126,7 +140,23 @@ public class SumoPlugin extends JavaPlugin {
           .registerEvents(new MenuListener(gui, arenaService, orchestrator), this);
     }
 
+    initMetrics(pluginConfig, arenaService);
+
     adventure.audiences().console().sendMessage(messages.get(Locale.US, MessageKey.PLUGIN_ENABLED));
+  }
+
+  private void initMetrics(PluginConfig config, ArenaService arenaService) {
+    if (BSTATS_PLUGIN_ID <= 0) return;
+    try {
+      Metrics metrics = new Metrics(this, BSTATS_PLUGIN_ID);
+      metrics.addCustomChart(
+          new SimplePie("database", () -> config.databaseDriver().name().toLowerCase(Locale.ROOT)));
+      metrics.addCustomChart(
+          new SimplePie("scoreboard", () -> String.valueOf(config.scoreboardEnabled())));
+      metrics.addCustomChart(new SingleLineChart("arenas", () -> arenaService.all().size()));
+    } catch (Throwable t) {
+      getLogger().warning("bStats metrics could not start: " + t.getMessage());
+    }
   }
 
   @Override

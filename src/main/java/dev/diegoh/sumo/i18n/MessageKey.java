@@ -14,6 +14,7 @@ public enum MessageKey {
   ARENA_LOBBY_SET("arena.lobby-set"),
   ARENA_BOUNDS_SET("arena.bounds-set"),
   ARENA_KB_SET("arena.kb-set"),
+  ARENA_PLAYERS_SET("arena.players-set"),
   JOIN_SUCCESS("join.success"),
   JOIN_ALREADY_IN_GAME("join.already-in-game"),
   JOIN_FULL("join.full"),

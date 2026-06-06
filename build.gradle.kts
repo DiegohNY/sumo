@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.adventure.minimessage)
     implementation(libs.adventure.legacy)
     implementation(libs.adventure.platform.bukkit)
+    implementation(libs.bstats)
 
     // Declared via plugin.yml `libraries:` so the server downloads them at runtime.
     // Listed compileOnly here so we can still compile against them locally.
@@ -63,6 +64,7 @@ tasks.shadowJar {
     archiveClassifier.set("")
     val shadeBase = "${project.group}.shadow"
     relocate("net.kyori", "$shadeBase.kyori")
+    relocate("org.bstats", "$shadeBase.bstats")
     minimize()
 }
 

@@ -7,6 +7,7 @@ sqlite = "3.53.2.0"
 mariadb = "3.5.8"
 junit = "5.11.0"
 mockbukkit = "3.9.0"
+bstats = "3.1.0"
 shadow = "8.1.1"
 runPaper = "2.3.0"
 spotless = "8.6.0"
@@ -21,6 +22,7 @@ adventure-platform-bukkit = { module = "net.kyori:adventure-platform-bukkit", ve
 hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
 sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
 mariadb = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariadb" }
+bstats = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 mockbukkit = { module = "com.github.seeseemelk:MockBukkit-v1.20", version.ref = "mockbukkit" }
 

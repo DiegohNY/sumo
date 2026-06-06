@@ -23,5 +23,8 @@ public record PluginConfig(
     double defaultKnockbackFriction,
     int matchCountdownSeconds,
     int endDelaySeconds,
+    int joinPeriodSeconds,
     boolean scoreboardEnabled,
-    boolean guiEnabled) {}
+    boolean guiEnabled,
+    boolean autoStartEnabled,
+    boolean autoStartWhenFull) {}
