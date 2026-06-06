@@ -1,15 +1,15 @@
 [versions]
 spigot = "1.20.1-R0.1-SNAPSHOT"
 adventure-api = "4.17.0"
-adventure-platform = "4.3.4"
+adventure-platform = "4.4.1"
 hikari = "5.1.0"
-sqlite = "3.53.1.0"
+sqlite = "3.53.2.0"
 mariadb = "3.5.8"
 junit = "5.11.0"
 mockbukkit = "3.9.0"
 shadow = "8.1.1"
 runPaper = "2.3.0"
-spotless = "6.25.0"
+spotless = "8.6.0"
 
 [libraries]
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }

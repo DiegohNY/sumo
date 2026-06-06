@@ -1,8 +1,12 @@
 name: dependabot-auto-merge
 
-# Auto-approve and enable auto-merge for Dependabot PRs that are patch or minor
-# updates. They still have to pass the required CI check ("build") before GitHub
-# merges them. Major updates are left for a human to review.
+# Enable auto-merge for Dependabot PRs that are patch or minor updates. They still
+# have to pass the required CI check ("build") before GitHub merges them. Major
+# updates are left for a human to review.
+#
+# Note: we intentionally do NOT call `gh pr review --approve` — the default
+# GITHUB_TOKEN is not permitted to approve PRs, and branch protection here requires
+# a passing check rather than a review, so an approval is unnecessary.
 
 on: pull_request_target
 
@@ -17,13 +21,11 @@ jobs:
     steps:
       - name: Fetch Dependabot metadata
         id: meta
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@v3
 
-      - name: Approve and enable auto-merge (patch & minor only)
+      - name: Enable auto-merge (patch & minor only)
         if: steps.meta.outputs.update-type == 'version-update:semver-patch' || steps.meta.outputs.update-type == 'version-update:semver-minor'
-        run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --auto --squash "$PR_URL"
+        run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
