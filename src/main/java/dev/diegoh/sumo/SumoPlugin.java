@@ -47,9 +47,8 @@ import org.bstats.charts.SingleLineChart;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SumoPlugin extends JavaPlugin {
-  // bStats service id. Register the plugin at https://bstats.org to get one, then set it here.
-  // While 0, metrics stay off so nothing is sent.
-  private static final int BSTATS_PLUGIN_ID = 0;
+  // bStats service id (https://bstats.org/plugin/bukkit/Sumo/31843). 0 disables metrics.
+  private static final int BSTATS_PLUGIN_ID = 31843;
 
   private AdventureUtil adventure;
   private StatsRepository statsRepository;
