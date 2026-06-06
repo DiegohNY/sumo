@@ -21,6 +21,7 @@ class GameOrchestratorTest {
   private ServerMock server;
   private WorldMock world;
   private SumoPlugin plugin;
+  private SessionRegistry registry;
   private GameOrchestrator orchestrator;
   private Arena alpha;
   private Arena bravo;
@@ -30,7 +31,8 @@ class GameOrchestratorTest {
     server = MockBukkit.mock();
     world = server.addSimpleWorld("world");
     plugin = MockBukkit.load(SumoPlugin.class);
-    orchestrator = new GameOrchestrator(plugin, new InventoryStore(), new SessionRegistry());
+    registry = new SessionRegistry();
+    orchestrator = new GameOrchestrator(plugin, new InventoryStore(), registry);
     alpha = arenaAt("alpha", world, 100);
     bravo = arenaAt("bravo", world, 200);
   }
@@ -54,6 +56,25 @@ class GameOrchestratorTest {
     PlayerMock a = server.addPlayer();
     assertTrue(orchestrator.join(alpha, a));
     assertFalse(orchestrator.join(bravo, a));
+  }
+
+  @Test
+  void tournamentEndReleasesWinnerAndResetsArena() {
+    // Zero countdown and end-delay so the flow resolves within a couple of ticks.
+    GameOrchestrator orch = new GameOrchestrator(plugin, new InventoryStore(), registry, 0, 0);
+    PlayerMock a = server.addPlayer();
+    PlayerMock b = server.addPlayer();
+    assertTrue(orch.join(alpha, a));
+    assertTrue(orch.join(alpha, b));
+    GameSession session = orch.sessionForArena("alpha").orElseThrow();
+    assertTrue(session.startTournament()); // countdown 0 -> ACTIVE immediately
+    session.recordElimination(b.getUniqueId()); // a wins -> tournament ends
+
+    server.getScheduler().performTicks(3L); // run the scheduled end cleanup
+
+    assertTrue(orch.sessionForArena("alpha").isEmpty(), "session should be removed after end");
+    assertTrue(registry.find(a.getUniqueId()).isEmpty(), "winner should be released");
+    assertTrue(orch.join(alpha, a), "arena should be joinable again");
   }
 
   private Arena arenaAt(String id, WorldMock w, int x) {

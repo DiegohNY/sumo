@@ -11,6 +11,8 @@ public sealed interface SessionEvent {
 
   record MatchStarted(UUID playerA, UUID playerB) implements SessionEvent {}
 
+  record CountdownTick(int secondsLeft) implements SessionEvent {}
+
   record PlayerEliminated(UUID player, UUID matchWinner) implements SessionEvent {}
 
   record TournamentEnded(UUID winner) implements SessionEvent {}

@@ -22,5 +22,6 @@ public record PluginConfig(
     double defaultKnockbackVertical,
     double defaultKnockbackFriction,
     int matchCountdownSeconds,
+    int endDelaySeconds,
     boolean scoreboardEnabled,
     boolean guiEnabled) {}

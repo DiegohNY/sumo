@@ -53,6 +53,10 @@ public final class SessionUiPresenter {
       onLeave(l.player());
     } else if (event instanceof SessionEvent.MatchStarted m) {
       onMatchStarted(m.playerA(), m.playerB());
+    } else if (event instanceof SessionEvent.CountdownTick c) {
+      onCountdownTick(c.secondsLeft());
+    } else if (event instanceof SessionEvent.StateChanged s) {
+      if (s.next() == dev.diegoh.sumo.game.GameState.ACTIVE) onFight();
     } else if (event instanceof SessionEvent.PlayerEliminated e) {
       onEliminated(e.player(), e.matchWinner());
     } else if (event instanceof SessionEvent.TournamentEnded t) {
@@ -80,20 +84,37 @@ public final class SessionUiPresenter {
     Player pb = Bukkit.getPlayer(b);
     String nameA = pa != null ? pa.getName() : a.toString();
     String nameB = pb != null ? pb.getName() : b.toString();
-    Component title =
+    Component msg =
         messages.get(
             locale,
             MessageKey.MATCH_STARTING,
             Placeholder.parsed("player_a", nameA),
             Placeholder.parsed("player_b", nameB));
+    for (Player p : participantsPlayers()) {
+      audience(p).sendMessage(msg);
+    }
+  }
+
+  private void onCountdownTick(int secondsLeft) {
+    Component num =
+        messages.get(
+            locale,
+            MessageKey.MATCH_COUNTDOWN,
+            Placeholder.parsed("seconds", String.valueOf(secondsLeft)));
+    Title.Times times =
+        Title.Times.times(Duration.ZERO, Duration.ofMillis(1100), Duration.ofMillis(150));
+    Title title = Title.title(num, Component.empty(), times);
+    for (Player p : participantsPlayers()) {
+      audience(p).showTitle(title);
+    }
+  }
+
+  private void onFight() {
     Component fight = messages.get(locale, MessageKey.MATCH_FIGHT);
     Title.Times times =
-        Title.Times.times(Duration.ofMillis(200), Duration.ofSeconds(2), Duration.ofMillis(500));
-    Title shownTitle = Title.title(title, Component.empty(), times);
+        Title.Times.times(Duration.ofMillis(100), Duration.ofSeconds(1), Duration.ofMillis(300));
     Title fightTitle = Title.title(fight, Component.empty(), times);
     for (Player p : participantsPlayers()) {
-      audience(p).showTitle(shownTitle);
-      audience(p).sendMessage(title);
       audience(p).showTitle(fightTitle);
     }
   }

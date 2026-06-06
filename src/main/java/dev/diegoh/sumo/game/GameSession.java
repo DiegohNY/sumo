@@ -142,17 +142,27 @@ public final class GameSession {
       onCountdownFinished();
       return;
     }
+    fire(new SessionEvent.CountdownTick(countdownSeconds));
+    scheduleCountdownTick(epoch, countdownSeconds);
+  }
+
+  private void scheduleCountdownTick(int epoch, int remaining) {
     plugin
         .getServer()
         .getScheduler()
         .runTaskLater(
             plugin,
             () -> {
-              if (state == GameState.COUNTDOWN && epoch == matchEpoch) {
+              if (state != GameState.COUNTDOWN || epoch != matchEpoch) return;
+              int left = remaining - 1;
+              if (left <= 0) {
                 onCountdownFinished();
+              } else {
+                fire(new SessionEvent.CountdownTick(left));
+                scheduleCountdownTick(epoch, left);
               }
             },
-            countdownSeconds * 20L);
+            20L);
   }
 
   private void teleportToSpawns(UUID a, UUID b) {
