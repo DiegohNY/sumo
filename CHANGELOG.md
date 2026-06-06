@@ -14,6 +14,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - An eliminated player's sidebar was re-applied right after being cleared, leaving them visually "still in game" — the elimination event now fires after the player leaves the roster, so the clear sticks.
 - Arena bounds now auto-fit around the two spawns whenever a spawn is set, so a freshly configured arena is playable without a manual `/sumo setbounds` (previously fighters could be eliminated instantly for spawning outside the default bounds). `/sumo setbounds` still works as a manual override.
 - Countdown and FIGHT! titles are shorter and the countdown shows as a subtitle, so they no longer block the view once the round is live.
+- Player stats were never recorded (always zero). Each finished match now records a win for the victor and a loss for the eliminated player.
+- Auto-fitted arena bounds are now much more generous (buffer raised and a minimum radius of 16) so a push no longer ejects a fighter on the first hit.
+- Added input guards: `/sumo setbounds` rejects a non-positive radius and `/sumo setkb` rejects invalid knockback values instead of throwing.
 
 ### Planned
 

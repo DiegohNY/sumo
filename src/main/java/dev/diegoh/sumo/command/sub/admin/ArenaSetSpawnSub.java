@@ -110,12 +110,15 @@ public final class ArenaSetSpawnSub implements SubCommand {
                 Placeholder.parsed("slot", args[1].toUpperCase())));
   }
 
-  /** A cylinder centered between the two spawns, with a buffer so fighters aren't instantly out. */
+  /**
+   * A generous cylinder centered between the two spawns so fighters aren't ejected on the first
+   * push. Admins can tighten or widen it with {@code /sumo setbounds}.
+   */
   private static ArenaBounds autoBounds(Arena arena) {
     Location a = arena.spawnA();
     Location b = arena.spawnB();
     Location center = a.clone().add(b).multiply(0.5);
-    double radius = (a.distance(b) / 2.0) + 6.0;
+    double radius = Math.max((a.distance(b) / 2.0) + 12.0, 16.0);
     return ArenaBounds.cylinder(center, radius);
   }
 

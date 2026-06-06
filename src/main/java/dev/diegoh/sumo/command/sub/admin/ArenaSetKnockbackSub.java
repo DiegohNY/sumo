@@ -79,10 +79,27 @@ public final class ArenaSetKnockbackSub implements SubCommand {
       vertical = Double.parseDouble(args[2]);
       friction = Double.parseDouble(args[3]);
     } catch (NumberFormatException e) {
+      adventure
+          .audiences()
+          .sender(sender)
+          .sendMessage(
+              messages.get(
+                  localeResolver.resolve(sender), MessageKey.INVALID_USAGE, "usage", usage()));
       return;
     }
-    arenas.update(
-        arena.toBuilder().knockback(new KnockbackConfig(strength, vertical, friction)).build());
+    KnockbackConfig knockback;
+    try {
+      knockback = new KnockbackConfig(strength, vertical, friction);
+    } catch (IllegalArgumentException e) {
+      adventure
+          .audiences()
+          .sender(sender)
+          .sendMessage(
+              messages.get(
+                  localeResolver.resolve(sender), MessageKey.INVALID_USAGE, "usage", usage()));
+      return;
+    }
+    arenas.update(arena.toBuilder().knockback(knockback).build());
     adventure
         .audiences()
         .sender(sender)

@@ -77,6 +77,19 @@ public final class ArenaSetBoundsSub implements SubCommand {
     try {
       radius = Double.parseDouble(args[1]);
     } catch (NumberFormatException e) {
+      adventure
+          .audiences()
+          .player(p)
+          .sendMessage(
+              messages.get(localeResolver.resolve(p), MessageKey.INVALID_USAGE, "usage", usage()));
+      return;
+    }
+    if (radius <= 0) {
+      adventure
+          .audiences()
+          .player(p)
+          .sendMessage(
+              messages.get(localeResolver.resolve(p), MessageKey.INVALID_USAGE, "usage", usage()));
       return;
     }
     arenas.update(arena.toBuilder().bounds(ArenaBounds.cylinder(p.getLocation(), radius)).build());

@@ -33,6 +33,7 @@ import dev.diegoh.sumo.player.InventoryStore;
 import dev.diegoh.sumo.player.SessionRegistry;
 import dev.diegoh.sumo.queue.QueueService;
 import dev.diegoh.sumo.stats.SqlStatsRepository;
+import dev.diegoh.sumo.stats.StatsRecorder;
 import dev.diegoh.sumo.stats.StatsRepository;
 import dev.diegoh.sumo.stats.StatsService;
 import dev.diegoh.sumo.ui.SessionUiPresenter;
@@ -75,12 +76,14 @@ public class SumoPlugin extends JavaPlugin {
             pluginConfig.endDelaySeconds());
 
     Locale defaultLocale = parseLocale(pluginConfig.defaultLocale());
+    StatsRecorder statsRecorder = new StatsRecorder(statsService, getLogger());
     orchestrator.setOnSessionCreated(
         session -> {
           SessionUiPresenter presenter =
               new SessionUiPresenter(
                   session, messages, defaultLocale, adventure, pluginConfig.scoreboardEnabled());
           presenter.attach();
+          statsRecorder.attach(session);
         });
 
     // QueueService initialized but not yet wired into command flow (planned for future iteration).
