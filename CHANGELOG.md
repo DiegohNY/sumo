@@ -6,6 +6,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Planned
+
+- CLI surface for the matchmaking queue (currently programmatic only).
+- PlaceholderAPI integration.
+- ELO/MMR matchmaking.
+- Tournament bracket display.
+- Mid-match reconnect with reserved slot.
+- Brigadier-native commands for Paper.
+- Persistent inventory snapshots (crash safety) and GUI pagination for >54 arenas.
+
+## [0.2.1] — 2026-06-06
+
 ### Added
 
 - **`/sumo top`** — win leaderboard (top 10), backed by an indexed SQL query.
@@ -15,6 +27,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Fixed
 
+- Mobs (and any non-opponent entity) could damage a fighter in the lobby and mid-match; now the only damage allowed to an in-game player is a hit from their current opponent while the round is live. Normal combat between players outside Sumo is no longer affected.
+- Reworked knockback into a crisp horizontal push plus a vertical pop (velocity is replaced, not blended), fixing the janky/weak feel.
 - Match countdown never ended, leaving both fighters frozen for the whole match (movement is blocked during the countdown). The COUNTDOWN → ACTIVE transition is now scheduled and runs after `defaults.match-countdown-seconds`, with a guard so a countdown from an interrupted match can't affect a later one.
 - The match countdown is now shown to players as a ticking title (`5… 4… 3…`) followed by a FIGHT! title when it ends, so they know when the round starts.
 - At the end of a tournament the winner was never released: they stayed stuck in the arena with the sidebar still showing, the cleared inventory unreturned, and the arena left unjoinable for everyone else. The winner is now restored (inventory + location) and the session is torn down after `defaults.end-delay-seconds`, freeing the arena. Eliminated players are released immediately and their sidebar cleared.
@@ -30,16 +44,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Player stats use an atomic read-modify-write, preventing lost win/loss updates under concurrent matches.
 - Default knockback softened (strength 0.5, vertical 0.35) and auto-fitted bounds widened so a single push no longer ejects a fighter.
 - Null-world guards before teleports; joins are refused for arenas whose world isn't loaded.
-
-### Planned
-
-- CLI surface for the matchmaking queue (currently programmatic only).
-- bStats opt-in metrics.
-- PlaceholderAPI integration.
-- ELO/MMR matchmaking and `/sumo top` leaderboard.
-- Tournament bracket display.
-- Mid-match reconnect with reserved slot.
-- Brigadier-native commands for Paper.
 
 ## [0.2.0] — 2026-05-29
 
