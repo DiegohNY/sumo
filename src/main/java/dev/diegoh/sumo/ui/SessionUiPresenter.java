@@ -49,20 +49,23 @@ public final class SessionUiPresenter {
   private void handle(SessionEvent event) {
     if (event instanceof SessionEvent.PlayerJoined j) {
       onJoin(j.player());
+      refreshScoreboard();
     } else if (event instanceof SessionEvent.PlayerLeft l) {
       onLeave(l.player());
+      refreshScoreboard();
     } else if (event instanceof SessionEvent.MatchStarted m) {
       onMatchStarted(m.playerA(), m.playerB());
     } else if (event instanceof SessionEvent.CountdownTick c) {
       onCountdownTick(c.secondsLeft());
     } else if (event instanceof SessionEvent.StateChanged s) {
       if (s.next() == dev.diegoh.sumo.game.GameState.ACTIVE) onFight();
+      refreshScoreboard();
     } else if (event instanceof SessionEvent.PlayerEliminated e) {
       onEliminated(e.player(), e.matchWinner());
+      refreshScoreboard();
     } else if (event instanceof SessionEvent.TournamentEnded t) {
       onTournamentEnded(t.winner());
     }
-    refreshScoreboard();
   }
 
   private void onJoin(UUID uuid) {

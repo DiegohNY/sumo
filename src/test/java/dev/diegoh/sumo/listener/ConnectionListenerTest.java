@@ -25,6 +25,8 @@ class ConnectionListenerTest {
   private SumoPlugin plugin;
   private GameOrchestrator orchestrator;
   private InventoryStore inventoryStore;
+  private dev.diegoh.sumo.stats.SqlStatsRepository statsRepo;
+  private dev.diegoh.sumo.stats.StatsService statsService;
 
   @BeforeEach
   void setUp() {
@@ -33,10 +35,15 @@ class ConnectionListenerTest {
     plugin = MockBukkit.load(SumoPlugin.class);
     inventoryStore = new InventoryStore();
     orchestrator = new GameOrchestrator(plugin, inventoryStore, new SessionRegistry());
+    statsRepo = dev.diegoh.sumo.stats.SqlStatsRepository.sqlite("jdbc:sqlite::memory:");
+    statsRepo.init();
+    statsService = new dev.diegoh.sumo.stats.StatsService(statsRepo);
   }
 
   @AfterEach
   void tearDown() {
+    statsService.shutdown();
+    statsRepo.close();
     MockBukkit.unmock();
   }
 
@@ -57,7 +64,8 @@ class ConnectionListenerTest {
     assertTrue(orchestrator.join(arena, p));
     assertTrue(orchestrator.sessionOf(p).isPresent());
 
-    ConnectionListener listener = new ConnectionListener(orchestrator, inventoryStore);
+    ConnectionListener listener =
+        new ConnectionListener(orchestrator, inventoryStore, statsService);
     listener.onQuit(new PlayerQuitEvent(p, (String) null));
 
     assertTrue(orchestrator.sessionOf(p).isEmpty());
@@ -65,7 +73,8 @@ class ConnectionListenerTest {
 
   @Test
   void quitForPlayerNotInGameIsHarmless() {
-    ConnectionListener listener = new ConnectionListener(orchestrator, inventoryStore);
+    ConnectionListener listener =
+        new ConnectionListener(orchestrator, inventoryStore, statsService);
     PlayerMock p = server.addPlayer();
     assertDoesNotThrow(() -> listener.onQuit(new PlayerQuitEvent(p, (String) null)));
   }

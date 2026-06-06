@@ -16,12 +16,12 @@ public final class SqlStatsRepository implements StatsRepository {
   private final DatabaseDriver driver;
   private final ExecutorService io;
 
-  private SqlStatsRepository(HikariDataSource ds, DatabaseDriver driver) {
+  private SqlStatsRepository(HikariDataSource ds, DatabaseDriver driver, int ioThreads) {
     this.ds = ds;
     this.driver = driver;
     this.io =
         Executors.newFixedThreadPool(
-            Math.max(2, Runtime.getRuntime().availableProcessors() / 2),
+            Math.max(1, ioThreads),
             r -> {
               Thread t = new Thread(r, "sumo-stats-io");
               t.setDaemon(true);
@@ -34,8 +34,11 @@ public final class SqlStatsRepository implements StatsRepository {
     cfg.setDriverClassName(DatabaseDriver.SQLITE.driverClass());
     cfg.setJdbcUrl(jdbcUrl);
     cfg.setMaximumPoolSize(1);
+    cfg.setConnectionTimeout(5000);
     cfg.setPoolName("sumo-sqlite");
-    return new SqlStatsRepository(new HikariDataSource(cfg), DatabaseDriver.SQLITE);
+    // SQLite is a single writer: one I/O thread matches the one-connection pool and avoids
+    // threads blocking on connection checkout.
+    return new SqlStatsRepository(new HikariDataSource(cfg), DatabaseDriver.SQLITE, 1);
   }
 
   public static SqlStatsRepository mysql(
@@ -49,7 +52,10 @@ public final class SqlStatsRepository implements StatsRepository {
     cfg.setMinimumIdle(minIdle);
     cfg.setConnectionTimeout(timeoutMs);
     cfg.setPoolName("sumo-mysql");
-    return new SqlStatsRepository(new HikariDataSource(cfg), DatabaseDriver.MYSQL);
+    return new SqlStatsRepository(
+        new HikariDataSource(cfg),
+        DatabaseDriver.MYSQL,
+        Math.max(2, Runtime.getRuntime().availableProcessors() / 2));
   }
 
   @Override

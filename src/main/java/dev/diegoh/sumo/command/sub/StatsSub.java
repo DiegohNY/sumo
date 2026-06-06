@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 
 public final class StatsSub implements SubCommand {
@@ -22,16 +23,28 @@ public final class StatsSub implements SubCommand {
   private final Messages messages;
   private final LocaleResolver localeResolver;
   private final AdventureUtil adventure;
+  private final Plugin plugin;
 
   public StatsSub(
       StatsService stats,
       Messages messages,
       LocaleResolver localeResolver,
-      AdventureUtil adventure) {
+      AdventureUtil adventure,
+      Plugin plugin) {
     this.stats = stats;
     this.messages = messages;
     this.localeResolver = localeResolver;
     this.adventure = adventure;
+    this.plugin = plugin;
+  }
+
+  /** Runs the action on the main thread (stats futures may complete on a DB I/O thread). */
+  private void onMain(Runnable action) {
+    if (Bukkit.isPrimaryThread()) {
+      action.run();
+    } else {
+      Bukkit.getScheduler().runTask(plugin, action);
+    }
   }
 
   @Override
@@ -79,19 +92,21 @@ public final class StatsSub implements SubCommand {
     }
     stats
         .get(uuid)
-        .thenAccept(s -> render(sender, target, s))
+        .thenAccept(s -> onMain(() -> render(sender, target, s)))
         .exceptionally(
             ex -> {
-              adventure
-                  .audiences()
-                  .sender(sender)
-                  .sendMessage(
-                      messages.get(
-                          localeResolver.resolve(sender),
-                          MessageKey.STATS_LINE,
-                          Placeholder.parsed("wins", "0"),
-                          Placeholder.parsed("losses", "0"),
-                          Placeholder.parsed("streak", "0")));
+              onMain(
+                  () ->
+                      adventure
+                          .audiences()
+                          .sender(sender)
+                          .sendMessage(
+                              messages.get(
+                                  localeResolver.resolve(sender),
+                                  MessageKey.STATS_LINE,
+                                  Placeholder.parsed("wins", "0"),
+                                  Placeholder.parsed("losses", "0"),
+                                  Placeholder.parsed("streak", "0"))));
               return null;
             });
   }

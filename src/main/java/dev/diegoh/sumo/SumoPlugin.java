@@ -108,7 +108,7 @@ public class SumoPlugin extends JavaPlugin {
             .register(new JoinSub(arenaService, orchestrator, messages, localeResolver, adventure))
             .register(new LeaveSub(orchestrator, messages, localeResolver, adventure))
             .register(new ListSub(arenaService, orchestrator, messages, localeResolver, adventure))
-            .register(new StatsSub(statsService, messages, localeResolver, adventure))
+            .register(new StatsSub(statsService, messages, localeResolver, adventure, this))
             .register(
                 new MenuSub(gui, pluginConfig.guiEnabled(), messages, localeResolver, adventure))
             .register(new ReloadSub(messages, arenaRepository, this, localeResolver, adventure))
@@ -129,7 +129,7 @@ public class SumoPlugin extends JavaPlugin {
 
     getServer()
         .getPluginManager()
-        .registerEvents(new ConnectionListener(orchestrator, inventoryStore), this);
+        .registerEvents(new ConnectionListener(orchestrator, inventoryStore, statsService), this);
     getServer().getPluginManager().registerEvents(new ProtectionListener(orchestrator), this);
     getServer().getPluginManager().registerEvents(new BoundsListener(orchestrator), this);
     getServer().getPluginManager().registerEvents(new CombatListener(orchestrator), this);

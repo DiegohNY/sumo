@@ -126,7 +126,9 @@ public final class GameSession {
         && (currentMatch.playerA().equals(uuid) || currentMatch.playerB().equals(uuid))) {
       UUID survivor =
           currentMatch.playerA().equals(uuid) ? currentMatch.playerB() : currentMatch.playerA();
-      advanceAfterMatch(survivor, uuid, false);
+      // Leaving or disconnecting mid-match is a forfeit: count it as a loss for the quitter and a
+      // win for the survivor (fires PlayerEliminated), so it can't be used to dodge a loss.
+      advanceAfterMatch(survivor, uuid, true);
     }
     return removed;
   }

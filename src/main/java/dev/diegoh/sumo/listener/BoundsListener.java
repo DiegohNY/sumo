@@ -18,10 +18,17 @@ public final class BoundsListener implements Listener {
 
   @EventHandler
   public void onMove(PlayerMoveEvent event) {
+    if (event.getTo() == null) return;
+    // Ignore pure head rotation / sub-block movement: nothing about bounds or water can change
+    // unless the block the player stands in changes. Cheap guard before any session/block lookup.
+    if (event.getFrom().getBlockX() == event.getTo().getBlockX()
+        && event.getFrom().getBlockY() == event.getTo().getBlockY()
+        && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+      return;
+    }
     Player p = event.getPlayer();
     GameSession s = orchestrator.sessionOf(p).orElse(null);
     if (s == null) return;
-    if (event.getTo() == null) return;
     if (s.state() == GameState.COUNTDOWN) {
       event.setCancelled(true);
       return;
