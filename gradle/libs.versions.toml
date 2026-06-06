@@ -1,5 +1,5 @@
 [versions]
-spigot = "1.20.1-R0.1-SNAPSHOT"
+spigot = "26.1.2-R0.1-SNAPSHOT"
 adventure-api = "4.17.0"
 adventure-platform = "4.4.1"
 hikari = "5.1.0"
