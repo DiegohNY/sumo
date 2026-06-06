@@ -83,14 +83,38 @@ public final class GameSession {
     if (state != GameState.IDLE && state != GameState.WAITING) return false;
     if (participants.size() >= arena.maxPlayers()) return false;
     if (participants.contains(player.getUniqueId())) return false;
+    if (arena.lobby().getWorld() == null) {
+      plugin
+          .getLogger()
+          .warning("Arena " + arena.id() + " lobby world is not loaded; join refused.");
+      return false;
+    }
     inventoryStore.capture(player);
     player.getInventory().clear();
     player.getInventory().setArmorContents(new org.bukkit.inventory.ItemStack[4]);
     player.teleport(arena.lobby());
+    resetVitals(player);
     participants.add(player.getUniqueId());
     setState(GameState.WAITING);
     fire(new SessionEvent.PlayerJoined(player.getUniqueId()));
     return true;
+  }
+
+  /**
+   * Full health, full food, no fire — applied on join and at the start of each match. Vitals are
+   * cosmetic; any server stub that doesn't implement a setter must not break the game flow.
+   */
+  private void resetVitals(Player p) {
+    try {
+      var maxHealth = p.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
+      if (maxHealth != null) p.setHealth(maxHealth.getValue());
+      p.setFoodLevel(20);
+      p.setSaturation(20f);
+      p.setExhaustion(0f);
+      p.setFireTicks(0);
+    } catch (RuntimeException ignored) {
+      // Non-critical vital state; ignore unsupported setters (e.g. under test mocks).
+    }
   }
 
   public boolean removePlayer(UUID uuid) {
@@ -168,8 +192,14 @@ public final class GameSession {
   private void teleportToSpawns(UUID a, UUID b) {
     Player pa = Bukkit.getPlayer(a);
     Player pb = Bukkit.getPlayer(b);
-    if (pa != null) pa.teleport(arena.spawnA());
-    if (pb != null) pb.teleport(arena.spawnB());
+    if (pa != null && arena.spawnA().getWorld() != null) {
+      pa.teleport(arena.spawnA());
+      resetVitals(pa);
+    }
+    if (pb != null && arena.spawnB().getWorld() != null) {
+      pb.teleport(arena.spawnB());
+      resetVitals(pb);
+    }
   }
 
   public void skipCountdownForTesting() {

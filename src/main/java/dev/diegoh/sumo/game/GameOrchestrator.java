@@ -116,7 +116,15 @@ public final class GameOrchestrator {
     }
   }
 
+  /** Restores every player still in a game and clears all sessions. Called on plugin disable. */
   public void shutdownAll() {
+    for (GameSession session : byArena.values()) {
+      for (var uuid : session.participants()) {
+        Player p = plugin.getServer().getPlayer(uuid);
+        if (p != null) inventoryStore.restore(p);
+        releasePlayer(uuid);
+      }
+    }
     byArena.clear();
   }
 }

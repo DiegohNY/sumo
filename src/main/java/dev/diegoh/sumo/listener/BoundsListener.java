@@ -30,8 +30,9 @@ public final class BoundsListener implements Listener {
     boolean outOfBounds = !s.arena().bounds().contains(event.getTo());
     boolean inWater = event.getTo().getBlock().getType() == Material.WATER;
     if (outOfBounds || inWater) {
+      // recordElimination -> restore() already teleports the loser back to where they came from.
+      // Don't add a second teleport here or it overrides the restore and dumps them at the lobby.
       s.recordElimination(p.getUniqueId());
-      p.teleport(s.arena().lobby());
     }
   }
 }

@@ -32,6 +32,6 @@ class ConfigLoaderTest {
     assertEquals("stats.db", config.sqliteFile());
     assertEquals(2, config.defaultMinPlayers());
     assertEquals(8, config.defaultMaxPlayers());
-    assertEquals(1.0, config.defaultKnockbackStrength());
+    assertEquals(0.5, config.defaultKnockbackStrength());
   }
 }

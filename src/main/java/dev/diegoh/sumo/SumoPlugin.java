@@ -114,7 +114,9 @@ public class SumoPlugin extends JavaPlugin {
     getCommand("sumo").setExecutor(root);
     getCommand("sumo").setTabCompleter(root);
 
-    getServer().getPluginManager().registerEvents(new ConnectionListener(orchestrator), this);
+    getServer()
+        .getPluginManager()
+        .registerEvents(new ConnectionListener(orchestrator, inventoryStore), this);
     getServer().getPluginManager().registerEvents(new ProtectionListener(orchestrator), this);
     getServer().getPluginManager().registerEvents(new BoundsListener(orchestrator), this);
     getServer().getPluginManager().registerEvents(new CombatListener(orchestrator), this);

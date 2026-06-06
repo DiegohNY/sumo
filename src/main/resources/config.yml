@@ -33,8 +33,8 @@ defaults:
   match-countdown-seconds: 5
   end-delay-seconds: 8
   knockback:
-    strength: 1.0
-    vertical-boost: 0.4
+    strength: 0.5
+    vertical-boost: 0.35
     friction: 0.5
 
 scoreboard:

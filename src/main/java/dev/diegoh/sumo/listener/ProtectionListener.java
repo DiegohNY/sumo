@@ -24,10 +24,12 @@ public final class ProtectionListener implements Listener {
   public void onDamage(EntityDamageEvent event) {
     if (!(event.getEntity() instanceof Player p)) return;
     if (orchestrator.sessionOf(p).isEmpty()) return;
+    // Player-vs-player hits are handled by CombatListener (it zeroes damage and applies knockback).
+    // Everything else (fall, void, lava, fire, cactus, magic, wither, freeze, ...) must not hurt a
+    // fighter — otherwise they could die outside the push mechanic and leave the match stuck.
     switch (event.getCause()) {
-      case FALL, VOID, LAVA, FIRE, FIRE_TICK, DROWNING, SUFFOCATION, STARVATION ->
-          event.setCancelled(true);
-      default -> {}
+      case ENTITY_ATTACK, ENTITY_SWEEP_ATTACK -> {}
+      default -> event.setCancelled(true);
     }
   }
 

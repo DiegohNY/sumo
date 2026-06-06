@@ -24,13 +24,15 @@ class ConnectionListenerTest {
   private WorldMock world;
   private SumoPlugin plugin;
   private GameOrchestrator orchestrator;
+  private InventoryStore inventoryStore;
 
   @BeforeEach
   void setUp() {
     server = MockBukkit.mock();
     world = server.addSimpleWorld("world");
     plugin = MockBukkit.load(SumoPlugin.class);
-    orchestrator = new GameOrchestrator(plugin, new InventoryStore(), new SessionRegistry());
+    inventoryStore = new InventoryStore();
+    orchestrator = new GameOrchestrator(plugin, inventoryStore, new SessionRegistry());
   }
 
   @AfterEach
@@ -55,7 +57,7 @@ class ConnectionListenerTest {
     assertTrue(orchestrator.join(arena, p));
     assertTrue(orchestrator.sessionOf(p).isPresent());
 
-    ConnectionListener listener = new ConnectionListener(orchestrator);
+    ConnectionListener listener = new ConnectionListener(orchestrator, inventoryStore);
     listener.onQuit(new PlayerQuitEvent(p, (String) null));
 
     assertTrue(orchestrator.sessionOf(p).isEmpty());
@@ -63,7 +65,7 @@ class ConnectionListenerTest {
 
   @Test
   void quitForPlayerNotInGameIsHarmless() {
-    ConnectionListener listener = new ConnectionListener(orchestrator);
+    ConnectionListener listener = new ConnectionListener(orchestrator, inventoryStore);
     PlayerMock p = server.addPlayer();
     assertDoesNotThrow(() -> listener.onQuit(new PlayerQuitEvent(p, (String) null)));
   }
