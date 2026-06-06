@@ -26,6 +26,7 @@ public final class ConfigLoader {
         cfg.getDouble("defaults.knockback.strength", 1.0),
         cfg.getDouble("defaults.knockback.vertical-boost", 0.4),
         cfg.getDouble("defaults.knockback.friction", 0.5),
+        cfg.getInt("defaults.match-countdown-seconds", 5),
         cfg.getBoolean("scoreboard.enabled", true),
         cfg.getBoolean("gui.enabled", true));
   }

@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Fixed
+
+- Match countdown never ended, leaving both fighters frozen for the whole match (movement is blocked during the countdown). The COUNTDOWN → ACTIVE transition is now scheduled and runs after `defaults.match-countdown-seconds`, with a guard so a countdown from an interrupted match can't affect a later one.
+
 ### Planned
 
 - CLI surface for the matchmaking queue (currently programmatic only).

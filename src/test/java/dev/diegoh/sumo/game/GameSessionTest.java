@@ -72,6 +72,18 @@ class GameSessionTest {
   }
 
   @Test
+  void countdownAutomaticallyTransitionsToActive() {
+    GameSession s = new GameSession(plugin, arena, inv, 1);
+    s.addPlayer(server.addPlayer());
+    s.addPlayer(server.addPlayer());
+    assertTrue(s.startTournament());
+    assertEquals(GameState.COUNTDOWN, s.state());
+    // Advance past the 1-second countdown (20 ticks).
+    server.getScheduler().performTicks(25L);
+    assertEquals(GameState.ACTIVE, s.state());
+  }
+
+  @Test
   void winnerOfFinalMatchTransitionsToEnding() {
     GameSession s = new GameSession(plugin, arena, inv);
     PlayerMock a = server.addPlayer();

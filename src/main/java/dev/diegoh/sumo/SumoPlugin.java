@@ -66,7 +66,8 @@ public class SumoPlugin extends JavaPlugin {
 
     InventoryStore inventoryStore = new InventoryStore();
     SessionRegistry registry = new SessionRegistry();
-    orchestrator = new GameOrchestrator(this, inventoryStore, registry);
+    orchestrator =
+        new GameOrchestrator(this, inventoryStore, registry, pluginConfig.matchCountdownSeconds());
 
     Locale defaultLocale = parseLocale(pluginConfig.defaultLocale());
     orchestrator.setOnSessionCreated(

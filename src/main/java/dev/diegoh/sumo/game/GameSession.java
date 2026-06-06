@@ -34,14 +34,24 @@ public final class GameSession {
   private final InventoryStore inventoryStore;
   private final Deque<UUID> participants = new ArrayDeque<>();
   private final List<Consumer<SessionEvent>> subscribers = new CopyOnWriteArrayList<>();
+  private final int countdownSeconds;
   private GameState state = GameState.IDLE;
   private Match currentMatch;
   private UUID winner;
+  // Incremented on every match transition so a stale scheduled countdown task can detect that the
+  // match it was started for is no longer current and skip flipping the state.
+  private int matchEpoch;
 
   public GameSession(Plugin plugin, Arena arena, InventoryStore inventoryStore) {
+    this(plugin, arena, inventoryStore, 5);
+  }
+
+  public GameSession(
+      Plugin plugin, Arena arena, InventoryStore inventoryStore, int countdownSeconds) {
     this.plugin = plugin;
     this.arena = arena;
     this.inventoryStore = inventoryStore;
+    this.countdownSeconds = Math.max(0, countdownSeconds);
   }
 
   public void subscribe(Consumer<SessionEvent> subscriber) {
@@ -118,6 +128,31 @@ public final class GameSession {
     setState(GameState.COUNTDOWN);
     teleportToSpawns(a, b);
     fire(new SessionEvent.MatchStarted(a, b));
+    scheduleCountdown();
+  }
+
+  /**
+   * Schedules the COUNTDOWN → ACTIVE transition. Without this, players stay frozen forever because
+   * movement is blocked during COUNTDOWN. The epoch guard ensures a task scheduled for an earlier
+   * match (e.g. one cut short by a disconnect) cannot flip the state of a later one.
+   */
+  private void scheduleCountdown() {
+    int epoch = ++matchEpoch;
+    if (countdownSeconds <= 0) {
+      onCountdownFinished();
+      return;
+    }
+    plugin
+        .getServer()
+        .getScheduler()
+        .runTaskLater(
+            plugin,
+            () -> {
+              if (state == GameState.COUNTDOWN && epoch == matchEpoch) {
+                onCountdownFinished();
+              }
+            },
+            countdownSeconds * 20L);
   }
 
   private void teleportToSpawns(UUID a, UUID b) {

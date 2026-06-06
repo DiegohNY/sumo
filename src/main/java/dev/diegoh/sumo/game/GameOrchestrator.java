@@ -21,13 +21,23 @@ public final class GameOrchestrator {
   private final Plugin plugin;
   private final InventoryStore inventoryStore;
   private final SessionRegistry registry;
+  private final int countdownSeconds;
   private final ConcurrentHashMap<String, GameSession> byArena = new ConcurrentHashMap<>();
   private Consumer<GameSession> onSessionCreated = s -> {};
 
   public GameOrchestrator(Plugin plugin, InventoryStore inventoryStore, SessionRegistry registry) {
+    this(plugin, inventoryStore, registry, 5);
+  }
+
+  public GameOrchestrator(
+      Plugin plugin,
+      InventoryStore inventoryStore,
+      SessionRegistry registry,
+      int countdownSeconds) {
     this.plugin = plugin;
     this.inventoryStore = inventoryStore;
     this.registry = registry;
+    this.countdownSeconds = countdownSeconds;
   }
 
   public void setOnSessionCreated(Consumer<GameSession> hook) {
@@ -40,7 +50,7 @@ public final class GameOrchestrator {
         byArena.computeIfAbsent(
             arena.id(),
             id -> {
-              GameSession s = new GameSession(plugin, arena, inventoryStore);
+              GameSession s = new GameSession(plugin, arena, inventoryStore, countdownSeconds);
               onSessionCreated.accept(s);
               return s;
             });
