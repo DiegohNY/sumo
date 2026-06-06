@@ -1,6 +1,7 @@
 package dev.diegoh.sumo.command.sub.admin;
 
 import dev.diegoh.sumo.arena.Arena;
+import dev.diegoh.sumo.arena.ArenaBounds;
 import dev.diegoh.sumo.arena.ArenaService;
 import dev.diegoh.sumo.command.SubCommand;
 import dev.diegoh.sumo.i18n.LocaleResolver;
@@ -10,6 +11,7 @@ import dev.diegoh.sumo.util.AdventureUtil;
 import java.util.ArrayList;
 import java.util.List;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -93,7 +95,10 @@ public final class ArenaSetSpawnSub implements SubCommand {
         return;
       }
     }
-    arenas.update(builder.build());
+    // Auto-fit the ring bounds around both spawns so a match is playable without a manual
+    // /sumo setbounds. Admins can still override afterwards with setbounds.
+    Arena withSpawn = builder.build();
+    arenas.update(withSpawn.toBuilder().bounds(autoBounds(withSpawn)).build());
     adventure
         .audiences()
         .player(p)
@@ -103,6 +108,15 @@ public final class ArenaSetSpawnSub implements SubCommand {
                 MessageKey.ARENA_SPAWN_SET,
                 Placeholder.parsed("id", arena.id()),
                 Placeholder.parsed("slot", args[1].toUpperCase())));
+  }
+
+  /** A cylinder centered between the two spawns, with a buffer so fighters aren't instantly out. */
+  private static ArenaBounds autoBounds(Arena arena) {
+    Location a = arena.spawnA();
+    Location b = arena.spawnB();
+    Location center = a.clone().add(b).multiply(0.5);
+    double radius = (a.distance(b) / 2.0) + 6.0;
+    return ArenaBounds.cylinder(center, radius);
   }
 
   @Override

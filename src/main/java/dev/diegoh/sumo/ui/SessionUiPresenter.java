@@ -101,9 +101,10 @@ public final class SessionUiPresenter {
             locale,
             MessageKey.MATCH_COUNTDOWN,
             Placeholder.parsed("seconds", String.valueOf(secondsLeft)));
+    // Stay just under one second so each number clears before the next and the screen is readable.
     Title.Times times =
-        Title.Times.times(Duration.ZERO, Duration.ofMillis(1100), Duration.ofMillis(150));
-    Title title = Title.title(num, Component.empty(), times);
+        Title.Times.times(Duration.ZERO, Duration.ofMillis(700), Duration.ofMillis(150));
+    Title title = Title.title(Component.empty(), num, times);
     for (Player p : participantsPlayers()) {
       audience(p).showTitle(title);
     }
@@ -111,8 +112,9 @@ public final class SessionUiPresenter {
 
   private void onFight() {
     Component fight = messages.get(locale, MessageKey.MATCH_FIGHT);
+    // Quick flash so it doesn't block the view once the round is live.
     Title.Times times =
-        Title.Times.times(Duration.ofMillis(100), Duration.ofSeconds(1), Duration.ofMillis(300));
+        Title.Times.times(Duration.ZERO, Duration.ofMillis(400), Duration.ofMillis(200));
     Title fightTitle = Title.title(fight, Component.empty(), times);
     for (Player p : participantsPlayers()) {
       audience(p).showTitle(fightTitle);

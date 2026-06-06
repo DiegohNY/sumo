@@ -11,6 +11,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Match countdown never ended, leaving both fighters frozen for the whole match (movement is blocked during the countdown). The COUNTDOWN → ACTIVE transition is now scheduled and runs after `defaults.match-countdown-seconds`, with a guard so a countdown from an interrupted match can't affect a later one.
 - The match countdown is now shown to players as a ticking title (`5… 4… 3…`) followed by a FIGHT! title when it ends, so they know when the round starts.
 - At the end of a tournament the winner was never released: they stayed stuck in the arena with the sidebar still showing, the cleared inventory unreturned, and the arena left unjoinable for everyone else. The winner is now restored (inventory + location) and the session is torn down after `defaults.end-delay-seconds`, freeing the arena. Eliminated players are released immediately and their sidebar cleared.
+- An eliminated player's sidebar was re-applied right after being cleared, leaving them visually "still in game" — the elimination event now fires after the player leaves the roster, so the clear sticks.
+- Arena bounds now auto-fit around the two spawns whenever a spawn is set, so a freshly configured arena is playable without a manual `/sumo setbounds` (previously fighters could be eliminated instantly for spawning outside the default bounds). `/sumo setbounds` still works as a manual override.
+- Countdown and FIGHT! titles are shorter and the countdown shows as a subtitle, so they no longer block the view once the round is live.
 
 ### Planned
 

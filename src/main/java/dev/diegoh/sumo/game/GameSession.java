@@ -102,7 +102,7 @@ public final class GameSession {
         && (currentMatch.playerA().equals(uuid) || currentMatch.playerB().equals(uuid))) {
       UUID survivor =
           currentMatch.playerA().equals(uuid) ? currentMatch.playerB() : currentMatch.playerA();
-      advanceAfterMatch(survivor, uuid);
+      advanceAfterMatch(survivor, uuid, false);
     }
     return removed;
   }
@@ -184,17 +184,19 @@ public final class GameSession {
     if (state != GameState.ACTIVE || currentMatch == null) return;
     UUID winnerId =
         currentMatch.playerA().equals(loser) ? currentMatch.playerB() : currentMatch.playerA();
-    fire(new SessionEvent.PlayerEliminated(loser, winnerId));
-    advanceAfterMatch(winnerId, loser);
+    advanceAfterMatch(winnerId, loser, true);
   }
 
-  private void advanceAfterMatch(UUID winnerId, UUID loserId) {
+  private void advanceAfterMatch(UUID winnerId, UUID loserId, boolean eliminated) {
+    // Remove the loser BEFORE firing, so listeners that re-render the scoreboard for the current
+    // participants no longer include them (otherwise the loser's sidebar gets re-applied).
     participants.remove(loserId);
     participants.remove(winnerId);
     participants.addLast(winnerId);
     currentMatch = null;
     Player loser = Bukkit.getPlayer(loserId);
     if (loser != null) inventoryStore.restore(loser);
+    if (eliminated) fire(new SessionEvent.PlayerEliminated(loserId, winnerId));
     if (participants.size() < 2) {
       endTournament();
     } else {
