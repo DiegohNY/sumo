@@ -40,6 +40,9 @@ player:
 stats:
   header: "<gold><b>Stats for <player>:</b></gold>"
   line: "<gray>Wins:</gray> <green><wins></green>  <gray>Losses:</gray> <red><losses></red>  <gray>Streak:</gray> <yellow><streak></yellow>"
+  top-header: "<gold><b>Top players (by wins):</b></gold>"
+  top-entry: "<gray><rank>.</gray> <yellow><player></yellow> <dark_gray>—</dark_gray> <green><wins>W</green> <red><losses>L</red> <gray>(best streak <yellow><best></yellow>)</gray>"
+  top-empty: "<gray>No stats recorded yet.</gray>"
 scoreboard:
   title: "<gold><b>Sumo</b></gold>"
   arena: "<gray>Arena:</gray> <yellow><id></yellow>"

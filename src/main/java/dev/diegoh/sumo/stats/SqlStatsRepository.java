@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -165,6 +167,38 @@ public final class SqlStatsRepository implements StatsRepository {
           } catch (SQLException e) {
             throw new IllegalStateException("Failed to save stats for " + stats.uuid(), e);
           }
+        },
+        io);
+  }
+
+  @Override
+  public CompletableFuture<List<PlayerStats>> topByWins(int limit) {
+    return CompletableFuture.supplyAsync(
+        () -> {
+          List<PlayerStats> out = new ArrayList<>();
+          try (Connection c = ds.getConnection();
+              PreparedStatement ps =
+                  c.prepareStatement(
+                      "SELECT uuid,wins,losses,current_streak,best_streak,total_games,last_played_ms"
+                          + " FROM player_stats ORDER BY wins DESC, best_streak DESC LIMIT ?")) {
+            ps.setInt(1, Math.max(1, limit));
+            try (ResultSet rs = ps.executeQuery()) {
+              while (rs.next()) {
+                out.add(
+                    new PlayerStats(
+                        UUID.fromString(rs.getString(1)),
+                        rs.getInt(2),
+                        rs.getInt(3),
+                        rs.getInt(4),
+                        rs.getInt(5),
+                        rs.getInt(6),
+                        rs.getLong(7)));
+              }
+            }
+          } catch (SQLException e) {
+            throw new IllegalStateException("Failed to load leaderboard", e);
+          }
+          return out;
         },
         io);
   }

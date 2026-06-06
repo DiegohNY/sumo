@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- **`/sumo top`** — win leaderboard (top 10), backed by an indexed SQL query.
 - **Auto-start matchmaking**: an arena starts on its own once it reaches `min-players` (after `join-period-seconds`), and immediately when it fills if `queue.auto-start-when-full` is set. `/sumo forcestart` still works for admins.
 - `/sumo setplayers <id> <min> <max>` to change an arena's player limits at runtime.
 - Optional **bStats** metrics (off until a service id is configured), reporting arena count, database driver and scoreboard usage.

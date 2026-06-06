@@ -62,6 +62,11 @@ public final class StatsService {
             });
   }
 
+  /** Top players by wins. Reads straight from storage (not cached). */
+  public CompletableFuture<java.util.List<PlayerStats>> top(int limit) {
+    return repository.topByWins(limit);
+  }
+
   public void invalidate(UUID uuid) {
     cache.remove(uuid);
   }

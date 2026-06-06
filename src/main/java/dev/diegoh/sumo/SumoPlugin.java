@@ -9,6 +9,7 @@ import dev.diegoh.sumo.command.sub.ListSub;
 import dev.diegoh.sumo.command.sub.MenuSub;
 import dev.diegoh.sumo.command.sub.ReloadSub;
 import dev.diegoh.sumo.command.sub.StatsSub;
+import dev.diegoh.sumo.command.sub.TopSub;
 import dev.diegoh.sumo.command.sub.admin.ArenaCreateSub;
 import dev.diegoh.sumo.command.sub.admin.ArenaDeleteSub;
 import dev.diegoh.sumo.command.sub.admin.ArenaSetBoundsSub;
@@ -109,6 +110,7 @@ public class SumoPlugin extends JavaPlugin {
             .register(new LeaveSub(orchestrator, messages, localeResolver, adventure))
             .register(new ListSub(arenaService, orchestrator, messages, localeResolver, adventure))
             .register(new StatsSub(statsService, messages, localeResolver, adventure, this))
+            .register(new TopSub(statsService, messages, localeResolver, adventure, this))
             .register(
                 new MenuSub(gui, pluginConfig.guiEnabled(), messages, localeResolver, adventure))
             .register(new ReloadSub(messages, arenaRepository, this, localeResolver, adventure))

@@ -40,6 +40,9 @@ player:
 stats:
   header: "<gold><b>Statistiche di <player>:</b></gold>"
   line: "<gray>Vittorie:</gray> <green><wins></green>  <gray>Sconfitte:</gray> <red><losses></red>  <gray>Streak:</gray> <yellow><streak></yellow>"
+  top-header: "<gold><b>Classifica (per vittorie):</b></gold>"
+  top-entry: "<gray><rank>.</gray> <yellow><player></yellow> <dark_gray>—</dark_gray> <green><wins>V</green> <red><losses>S</red> <gray>(streak migliore <yellow><best></yellow>)</gray>"
+  top-empty: "<gray>Nessuna statistica registrata ancora.</gray>"
 scoreboard:
   title: "<gold><b>Sumo</b></gold>"
   arena: "<gray>Arena:</gray> <yellow><id></yellow>"

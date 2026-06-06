@@ -30,6 +30,19 @@ class SqlStatsRepositoryTest {
   }
 
   @Test
+  void topByWinsOrdersDescending() throws Exception {
+    java.util.UUID low = java.util.UUID.randomUUID();
+    java.util.UUID high = java.util.UUID.randomUUID();
+    repo.save(PlayerStats.empty(low).withWin()).get();
+    repo.save(PlayerStats.empty(high).withWin().withWin().withWin()).get();
+    var top = repo.topByWins(10).get();
+    assertEquals(2, top.size());
+    assertEquals(high, top.get(0).uuid());
+    assertEquals(3, top.get(0).wins());
+    assertEquals(low, top.get(1).uuid());
+  }
+
+  @Test
   void saveThenLoadRoundTrip() throws Exception {
     UUID uuid = UUID.randomUUID();
     PlayerStats stats = PlayerStats.empty(uuid).withWin().withWin().withLoss();

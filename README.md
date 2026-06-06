@@ -49,6 +49,7 @@ Fast-paced 1v1 pushing minigame. Two players enter the ring; the one knocked int
 | `/sumo leave` | Leave your current game. | `sumo.play` |
 | `/sumo list` | List arenas and their state. | `sumo.play` |
 | `/sumo stats [player]` | View stats. | `sumo.play` |
+| `/sumo top` | Show the win leaderboard. | `sumo.play` |
 | `/sumo menu` | Open the chest GUI arena selector (toggle via `gui.enabled`). | `sumo.play` |
 | `/sumo reload` | Reload config, language files, and arenas. | `sumo.admin` |
 | `/sumo create <id>` | Create an arena from your current location. | `sumo.admin` |
