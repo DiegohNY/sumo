@@ -10,7 +10,7 @@ mockbukkit = "3.9.0"
 bstats = "3.2.1"
 shadow = "8.1.1"
 runPaper = "2.3.0"
-spotless = "8.6.0"
+spotless = "8.7.0"
 
 [libraries]
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
